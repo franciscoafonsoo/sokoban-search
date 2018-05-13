@@ -4,18 +4,36 @@ from search import *
 
 class Sokoban(Problem):
     def __init__(self, initial, goal=None):
-        """The constructor specifies the initial state, and possibly a goal
-        state, if there is a unique goal.  Your subclass's constructor can add
-        other arguments."""
+        """
+        2.1 Formulação
 
-        self.initial = initial
-        self.goal = goal
+        Representação de um puzzle sokoban vai ser um dict em que:
+
+        - 'board': lista de listas que representa o puzzle:
+            - Cada um das listas interiores vão ter os seguintes caracters:
+            – ’#’   – para representar as paredes;
+            – ’.’   – para representar as posições livres;
+            – ’*’   – para representar as caixas;
+            – ’o’   – (um ó minúsculo) para representar os alvos;
+            – ’A’   – para representar o arrumador.
+            – ’@’   – para representar uma caixa numa posição alvo.
+            – ’B’   – para representar o arrumador em cima de uma posição alvo.
+        - 'A': posição do arrumador, tuplo xy.
+        - '*': posição das caixas, tuplo xy.
+        - 'o': posição dos alvos, tuplo xy.
+
+        :param initial: dict descrito acima
+        :param goal: cada caixa estar num dos alvos (ver readme)
+        """
+
+        super().__init__(initial, goal)
 
     def actions(self, state):
         """Return the actions that can be executed in the given
         state. The result would typically be a list, but if there are
         many actions, consider yielding them one at a time in an
         iterator, rather than building them all at once."""
+        state
         raise NotImplementedError
 
     def result(self, state, action):
@@ -53,18 +71,34 @@ def import_sokoban_file(filename):
     2.3 Leitura de puzzle de ficheiro
 
     - Le o ficheiro linha a linha, e converte cada linha para uma lista de chars
+    - Procura arrumador, caixas e alvos para indexar a sua posição
     - Remove newline char
     - Verifica se cada linha tem o mesmo comprimento
 
-    :return: matrix com as linhas lidas do ficheiro
+    :return: dict com as linhas lidas do ficheiro + posições de arrumador, caixas e alvos
     """
+    puzzle = dict()
+    puzzle['*'] = list()
+    puzzle['o'] = list()
+
     matrix = list()
+
     with open(filename) as file:
         for line in file:
             matrix.append(list(line.rstrip('\n')))
 
+            for index, value in enumerate(line):
+                if value is 'A':
+                    puzzle['A'] = (len(matrix), index)
+                elif value is '*':
+                    puzzle['*'].append((len(matrix), index))
+                elif value is 'o':
+                    puzzle['o'].append((len(matrix), index))
+
+        puzzle['board'] = matrix
+
     len_first = len(matrix[0])
-    return matrix if all(len(i) == len_first for i in matrix) else False
+    return puzzle if all(len(i) == len_first for i in matrix) else False
 
 
 # importar os 3 ficheiros e testar
