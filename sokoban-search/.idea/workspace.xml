@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1c83539d-949a-42b2-a7a7-ddf64be80820" name="Default" comment="Feito - 2.3 Leitura de puzzle de ficheiro">
-      <change beforePath="$PROJECT_DIR$/sokoban.py" beforeDir="false" afterPath="$PROJECT_DIR$/sokoban.py" afterDir="false" />
-    </list>
+    <list default="true" id="1c83539d-949a-42b2-a7a7-ddf64be80820" name="Default" comment="Feito - 2.3 Leitura de puzzle de ficheiro" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

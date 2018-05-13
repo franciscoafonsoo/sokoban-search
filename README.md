@@ -1,7 +1,7 @@
 # sokoban-search
 Problem Solving for the Sokoban game using search algorithms from aima-python.
 
-### Notas sobre implementação
+## Notas sobre implementação
 
 #### initial
 
