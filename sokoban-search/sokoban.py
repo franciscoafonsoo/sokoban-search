@@ -2,6 +2,15 @@
 from search import *
 
 
+class EstadoSokoban():
+
+    def __init__(self):
+        self.tabuleiro = list()
+        self.arrumador = tuple()
+        self.caixas = list()
+        self.alvos = list()
+
+
 class Sokoban(Problem):
     def __init__(self, initial, goal=None):
         """
@@ -77,28 +86,22 @@ def import_sokoban_file(filename):
 
     :return: dict com as linhas lidas do ficheiro + posições de arrumador, caixas e alvos
     """
-    puzzle = dict()
-    puzzle['*'] = list()
-    puzzle['o'] = list()
-
-    matrix = list()
+    estado = EstadoSokoban()
 
     with open(filename) as file:
         for line in file:
-            matrix.append(list(line.rstrip('\n')))
+            estado.tabuleiro.append(list(line.rstrip('\n')))
 
             for index, value in enumerate(line):
                 if value is 'A':
-                    puzzle['A'] = (len(matrix), index)
+                    estado.arrumador = (len(estado.tabuleiro)-1, index-1)
                 elif value is '*':
-                    puzzle['*'].append((len(matrix), index))
+                    estado.caixas.append((len(estado.tabuleiro)-1, index-1))
                 elif value is 'o':
-                    puzzle['o'].append((len(matrix), index))
+                    estado.alvos.append((len(estado.tabuleiro)-1, index-1))
 
-        puzzle['board'] = matrix
-
-    len_first = len(matrix[0])
-    return puzzle if all(len(i) == len_first for i in matrix) else False
+    len_first = len(estado.tabuleiro[0])
+    return estado if all(len(i) == len_first for i in estado.tabuleiro) else False
 
 
 # importar os 3 ficheiros e testar
@@ -106,4 +109,6 @@ puzzle1 = import_sokoban_file('puzzles/puzzle1.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-Sokoban(puzzle1)
+print(puzzle1.tabuleiro)
+
+a = Sokoban(puzzle1)
