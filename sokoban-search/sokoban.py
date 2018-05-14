@@ -10,6 +10,24 @@ class EstadoSokoban():
         self.caixas = list()
         self.alvos = list()
 
+    def __str__(self):
+        # TODO
+        pass
+        #return str()
+
+    def __eq__(self, estado):
+        """Definir em que circunstância os dois estados são considerados iguais.
+        Necessário para os algoritmos de procura em grafo.
+        """
+        #TODO
+        pass
+        #return
+
+    def __hash__(self):
+        # TODO
+        pass
+        """Necessário para os algoritmos de procura em grafo."""
+        #return hash((self.jarros[0], self.jarros[1]))
 
 class Sokoban(Problem):
     def __init__(self, initial, goal=None):
@@ -109,6 +127,6 @@ puzzle1 = import_sokoban_file('puzzles/puzzle1.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-print(puzzle1.tabuleiro)
+print(puzzle2.tabuleiro)
 
 a = Sokoban(puzzle1)
