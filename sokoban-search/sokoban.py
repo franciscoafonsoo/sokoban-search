@@ -16,8 +16,6 @@ class EstadoSokoban:
     def pos_caixa(self, x, y):
         return self.tabuleiro[x][y] is '*'
 
-    # implementar verifições cima, esquerda....
-
     def ver_cima(self, x, y):
         if self.pos_livre(x, y-1):
             return 'andar cima'
@@ -47,9 +45,12 @@ class EstadoSokoban:
                 return 'empurrar direita'
 
     def __str__(self):
-        # TODO
-        pass
-        #return str()
+        represent = ''
+        for line in self.tabuleiro:
+            for char in line:
+                represent += char
+            represent += '\n'
+        return represent
 
     def __eq__(self, estado):
         """Definir em que circunstância os dois estados são considerados iguais.
@@ -64,6 +65,7 @@ class EstadoSokoban:
         pass
         """Necessário para os algoritmos de procura em grafo."""
         #return hash((self.jarros[0], self.jarros[1]))
+
 
 class Sokoban(Problem):
     def __init__(self, initial, goal=None):
@@ -160,6 +162,6 @@ puzzle1 = import_sokoban_file('puzzles/puzzle1.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-print(puzzle2.tabuleiro)
+print(puzzle1)
 
 a = Sokoban(puzzle1)
