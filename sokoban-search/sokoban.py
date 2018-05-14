@@ -242,6 +242,12 @@ class Sokoban(Problem):
         elif accao == 'empurrar':
             return c + 1
 
+    def __gt__(self):
+        pass
+
+    def __hash__(self):
+        return self
+
 
 def import_sokoban_file(filename):
     """
@@ -277,9 +283,8 @@ puzzle1 = import_sokoban_file('puzzles/puzzle1.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-a = Sokoban(puzzle2)
+a = Sokoban(puzzle3)
 
-resultado = depth_first_graph_search(a)
+resultado = breadth_first_search(a)
 
 print(resultado.solution())
-print(resultado.state)
