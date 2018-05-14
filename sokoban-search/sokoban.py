@@ -4,17 +4,23 @@ from search import *
 
 class EstadoSokoban:
 
-    def __init__(self):
-        self.alvos = list()
-        self.caixas = list()
-        self.tabuleiro = list()
-        self.arrumador = tuple()
+    def __init__(self, tabuleiro=None, caixas=None, arrumador=None, alvos=None):
+        self.alvos = list() if alvos is None else alvos
+        self.caixas = list() if caixas is None else caixas
+        self.tabuleiro = list() if tabuleiro is None else tabuleiro
+        self.arrumador = tuple() if arrumador is None else arrumador
 
     def pos_livre(self, x, y):
-        return self.tabuleiro[x][y] is '.'
+        try:
+            return self.tabuleiro[x][y] is '.'
+        except IndexError:
+            return False
 
     def pos_caixa(self, x, y):
-        return self.tabuleiro[x][y] is '*'
+        try:
+            return self.tabuleiro[x][y] is '*'
+        except IndexError:
+            return False
 
     def ver_cima(self, x, y):
         if self.pos_livre(x, y-1):
@@ -43,6 +49,9 @@ class EstadoSokoban:
         elif self.pos_caixa(x+1, y):
             if self.pos_livre(x+2, y):
                 return 'empurrar direita'
+
+    def caixa_alvo(self, x, y):
+        return (x, y) in self.alvos
 
     def __str__(self):
         represent = ''
@@ -94,19 +103,82 @@ class Sokoban(Problem):
         super().__init__(initial, goal)
 
     def actions(self, state):
-        """Return the actions that can be executed in the given
-        state. The result would typically be a list, but if there are
-        many actions, consider yielding them one at a time in an
-        iterator, rather than building them all at once."""
+        """
+        comment behavior later
+        :param state:
+        :return:
+        """
 
         x, y = state.arrumador
+        accoes = list()
 
-        raise NotImplementedError
+        accoes.append(state.ver_baixo(x, y))
+        accoes.append(state.ver_cima(x, y))
+        accoes.append(state.ver_direita(x, y))
+        accoes.append(state.ver_esquerda(x, y))
+
+        return accoes
 
     def result(self, state, action):
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
+
+        alvos = state.alvos
+        caixas = state.caixas
+        tabuleiro = state.tabuleiro
+        x, y = state.arrumador
+
+        accao, direcao = action.split()
+
+        if accao is 'andar':
+            if direcao is 'baixo':
+                tabuleiro[x][y] = '.'
+                tabuleiro[x][y+1] = 'A'
+                arrumador = (x, y+1)
+            elif direcao is 'cima':
+                tabuleiro[x][y] = '.'
+                tabuleiro[x][y-1] = 'A'
+                arrumador = (x, y-1)
+            elif direcao is 'direita':
+                tabuleiro[x][y] = '.'
+                tabuleiro[x+1][y] = 'A'
+                arrumador = (x+1, y)
+            elif direcao is 'esquerda':
+                tabuleiro[x][y] = '.'
+                tabuleiro[x-1][y] = 'A'
+                arrumador = (x-1, y)
+        elif accao is 'empurrar':
+            if direcao is 'baixo':
+                tabuleiro[x][y] = '.'
+                tabuleiro[x][y+1] = 'A'
+                arrumador = (x, y + 1)
+
+                if state.caixas_alvos(x, y + 2):
+                    tabuleiro[x][y + 2] = '@'
+                else:
+                    tabuleiro[x][y + 2] = '*'
+            elif direcao is 'cima':
+                tabuleiro[x][y] = '.'
+                tabuleiro[x][y-1] = 'A'
+                tabuleiro[x][y-2] = '*'
+                arrumador = (x, y-1)
+            elif direcao is 'direita':
+                tabuleiro[x][y] = '.'
+                tabuleiro[x+1][y] = 'A'
+                tabuleiro[x+2][y] = '*'
+                arrumador = (x + 1, y)
+            elif direcao is 'esquerda':
+                tabuleiro[x][y] = '.'
+                tabuleiro[x-1][y] = 'A'
+                tabuleiro[x-2][y] = '*'
+
+                arrumador = (x - 1, y)
+        else:
+            raise Exception('Alguma coisa correu mal (result)')
+
+
+
         raise NotImplementedError
 
     def goal_test(self, state):
@@ -162,6 +234,8 @@ puzzle1 = import_sokoban_file('puzzles/puzzle1.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
+a = Sokoban(puzzle1)
+
 print(puzzle1)
 
-a = Sokoban(puzzle1)
+a.actions(puzzle1)
