@@ -2,13 +2,49 @@
 from search import *
 
 
-class EstadoSokoban():
+class EstadoSokoban:
 
     def __init__(self):
+        self.alvos = list()
+        self.caixas = list()
         self.tabuleiro = list()
         self.arrumador = tuple()
-        self.caixas = list()
-        self.alvos = list()
+
+    def pos_livre(self, x, y):
+        return self.tabuleiro[x][y] is '.'
+
+    def pos_caixa(self, x, y):
+        return self.tabuleiro[x][y] is '*'
+
+    # implementar verifições cima, esquerda....
+
+    def ver_cima(self, x, y):
+        if self.pos_livre(x, y-1):
+            return 'andar cima'
+        elif self.pos_caixa(x, y-1):
+            if self.pos_livre(x, y-2):
+                return 'empurrar cima'
+
+    def ver_baixo(self, x, y):
+        if self.pos_livre(x, y+1):
+            return 'andar baixo'
+        elif self.pos_caixa(x, y+1):
+            if self.pos_livre(x, y+2):
+                return 'empurrar baixo'
+
+    def ver_esquerda(self, x, y):
+        if self.pos_livre(x-1, y):
+            return 'andar esquerda'
+        elif self.pos_caixa(x-1, y):
+            if self.pos_livre(x-2, y):
+                return 'empurrar esquerda'
+
+    def ver_direita(self, x, y):
+        if self.pos_livre(x+1, y):
+            return 'andar direita'
+        elif self.pos_caixa(x+1, y):
+            if self.pos_livre(x+2, y):
+                return 'empurrar direita'
 
     def __str__(self):
         # TODO
@@ -60,7 +96,9 @@ class Sokoban(Problem):
         state. The result would typically be a list, but if there are
         many actions, consider yielding them one at a time in an
         iterator, rather than building them all at once."""
-        state
+
+        x, y = state.arrumador
+
         raise NotImplementedError
 
     def result(self, state, action):
@@ -86,11 +124,6 @@ class Sokoban(Problem):
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
         return c + 1
-
-    def value(self, state):
-        """For optimization problems, each state has a value.  Hill-climbing
-        and related algorithms try to maximize this value."""
-        raise NotImplementedError
 
 
 def import_sokoban_file(filename):
