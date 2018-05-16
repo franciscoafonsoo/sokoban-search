@@ -14,44 +14,44 @@ class EstadoSokoban:
 
     def pos_livre(self, x, y):
         try:
-            return self.tabuleiro[x][y] == '.' or self.tabuleiro[x][y] == 'o'
+            return self.tabuleiro[x][y] == FREE or self.tabuleiro[x][y] == TARGET
         except IndexError:
             return False
 
     def pos_caixa(self, x, y):
         try:
-            return self.tabuleiro[x][y] == '*'
+            return self.tabuleiro[x][y] == BOX
         except IndexError:
             return False
 
     def ver_cima(self, x, y):
         print(x, y)
         if self.pos_livre(x-1, y):
-            return 'andar cima'
+            return WALK_UP
         elif self.pos_caixa(x-1, y):
             if self.pos_livre(x-2, y):
-                return 'empurrar cima'
+                return PUSH_UP
 
     def ver_baixo(self, x, y):
         if self.pos_livre(x+1, y):
-            return 'andar baixo'
+            return WALK_DOWN
         elif self.pos_caixa(x+1, y):
             if self.pos_livre(x+2, y):
-                return 'empurrar baixo'
+                return PUSH_DOWN
 
     def ver_esquerda(self, x, y):
         if self.pos_livre(x, y-1):
-            return 'andar esquerda'
+            return WALK_LEFT
         elif self.pos_caixa(x, y-1):
             if self.pos_livre(x, y-2):
-                return 'empurrar esquerda'
+                return PUSH_LEFT
 
     def ver_direita(self, x, y):
         if self.pos_livre(x, y+1):
-            return 'andar direita'
+            return WALK_RIGHT
         elif self.pos_caixa(x, y+1):
             if self.pos_livre(x, y+2):
-                return 'empurrar direita'
+                return PUSH_RIGHT
 
     def caixas_alvos(self, x, y):
         return (x, y) in self.alvos
@@ -80,19 +80,19 @@ class EstadoSokoban:
 class Sokoban(Problem):
     def __init__(self, initial):
         """
-        2.1 Formulação
+        2.1 Formulação
 
         Representação de um puzzle sokoban vai ser um dict em que:
 
         - 'board': lista de listas que representa o puzzle:
             - Cada um das listas interiores vão ter os seguintes caracters:
             – ’#’   – para representar as paredes;
-            – ’.’   – para representar as posições livres;
+            – ’.’   – para representar as posições livres;
             – ’*’   – para representar as caixas;
-            – ’o’   – (um ó minúsculo) para representar os alvos;
+            – ’o’   – (um ó minúsculo) para representar os alvos;
             – ’A’   – para representar o arrumador.
-            – ’@’   – para representar uma caixa numa posição alvo.
-            – ’B’   – para representar o arrumador em cima de uma posição alvo.
+            – ’@’   – para representar uma caixa numa posição alvo.
+            – ’B’   – para representar o arrumador em cima de uma posição alvo.
         - 'A': posição do arrumador, tuplo xy.
         - '*': posição das caixas, tuplo xy.
         - 'o': posição dos alvos, tuplo xy.
@@ -143,80 +143,80 @@ class Sokoban(Problem):
         else:
             return state
 
-        if accao == 'andar':
-            if direcao == 'baixo':
+        if accao == WALK:
+            if direcao == DOWN:
 
-                tabuleiro[x+1][y] = 'A'
+                tabuleiro[x+1][y] = USHER
                 arrumador = (x+1, y)
 
-            elif direcao == 'cima':
+            elif direcao == UP:
 
-                tabuleiro[x-1][y] = 'A'
+                tabuleiro[x-1][y] = USHER
                 arrumador = (x-1, y)
 
-            elif direcao == 'direita':
+            elif direcao == RIGHT:
 
-                tabuleiro[x][y+1] = 'A'
+                tabuleiro[x][y+1] = USHER
                 arrumador = (x, y+1)
 
-            elif direcao == 'esquerda':
-                tabuleiro[x][y-1] = 'A'
+            elif direcao == LEFT:
+                tabuleiro[x][y-1] = USHER
                 arrumador = (x, y-1)
 
-        elif accao == 'empurrar':
+        elif accao == PUSH:
 
-            if direcao == 'baixo':
+            if direcao == DOWN:
 
-                tabuleiro[x+1][y] = 'A'
+                tabuleiro[x+1][y] = USHER
                 arrumador = (x+1, y)
 
                 if state.caixas_alvos(x+2, y):
-                    tabuleiro[x+2][y] = '@'
+                    tabuleiro[x+2][y] = BOX_ON_TARGET
                 else:
-                    tabuleiro[x+2][y] = '*'
+                    tabuleiro[x+2][y] = BOX
                 caixas.remove((x+1,y))
                 caixas.append((x+2,y))
 
-            elif direcao == 'cima':
+            elif direcao == UP:
 
-                tabuleiro[x-1][y] = 'A'
+                tabuleiro[x-1][y] = USHER
                 arrumador = (x-1, y)
 
                 if state.caixas_alvos(x-2, y):
-                    tabuleiro[x-2][y] = '@'
+                    tabuleiro[x-2][y] = BOX_ON_TARGET
                 else:
-                    tabuleiro[x-2][y] = '*'
+                    tabuleiro[x-2][y] = BOX
                 caixas.remove((x-1,y))
                 caixas.append((x-2,y))
 
-            elif direcao == 'direita':
+            elif direcao == RIGHT:
 
-                tabuleiro[x][y+1] = 'A'
+                tabuleiro[x][y+1] = USHER
                 arrumador = (x, y+1)
 
                 if state.caixas_alvos(x, y+2):
-                    tabuleiro[x][y+2] = '@'
+                    tabuleiro[x][y+2] = BOX_ON_TARGET
                 else:
-                    tabuleiro[x][y+2] = '*'
+                    tabuleiro[x][y+2] = BOX
                 caixas.remove((x,y+1))
                 caixas.append((x,y+2))
 
-            elif direcao == 'esquerda':
+            elif direcao == LEFT:
 
-                tabuleiro[x][y-1] = 'A'
+                tabuleiro[x][y-1] = USHER
                 arrumador = (x, y - 1)
 
                 if state.caixas_alvos(x, y-2):
-                    tabuleiro[x][y-2] = '@'
+                    tabuleiro[x][y-2] = BOX_ON_TARGET
                 else:
-                    tabuleiro[x][y-2] = '*'
+                    tabuleiro[x][y-2] = BOX
                 caixas.remove((x,y-1))
                 caixas.append((x,y-2))
 
         if state.caixas_alvos(x, y):
-            tabuleiro[x][y] = 'o'
+            tabuleiro[x][y] = TARGET
         else:
-            tabuleiro[x][y] = '.'
+            tabuleiro[x][y] = FREE
 
         return EstadoSokoban(tabuleiro, arrumador, caixas, alvos)
 
@@ -227,7 +227,7 @@ class Sokoban(Problem):
         checking against a single self.goal is not enough."""
         for x, y in state.alvos:
 
-            if state.tabuleiro[x][y] is not '@':
+            if state.tabuleiro[x][y] is not BOX_ON_TARGET:
                 return False
         return True
 
@@ -238,9 +238,9 @@ class Sokoban(Problem):
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
         accao, direcao = action.split()
-        if accao == 'andar':
+        if accao == WALK:
             return c + 2
-        elif accao == 'empurrar':
+        elif accao == PUSH:
             return c + 1
 
     def __gt__(self):
@@ -268,12 +268,18 @@ def import_sokoban_file(filename):
             estado.tabuleiro.append(list(line.rstrip('\n')))
 
             for index, value in enumerate(line):
-                if value is 'A':
+                if value is USHER:
                     estado.arrumador = (len(estado.tabuleiro)-1, index)
-                elif value is '*':
+                elif value is BOX:
                     estado.caixas.append((len(estado.tabuleiro)-1, index))
-                elif value is 'o':
+                elif value is TARGET:
                     estado.alvos.append((len(estado.tabuleiro)-1, index))
+                elif value is BOX_ON_TARGET:
+                    estado.caixas.append((len(estado.tabuleiro) - 1, index))
+                    estado.alvos.append((len(estado.tabuleiro)-1, index))
+                elif value is USHER_ON_TARGET:
+                    estado.arrumador = (len(estado.tabuleiro) - 1, index)
+                    estado.alvos.append((len(estado.tabuleiro) - 1, index))
 
     len_first = len(estado.tabuleiro[0])
     return estado if all(len(i) == len_first for i in estado.tabuleiro) else False
@@ -284,8 +290,8 @@ puzzle1 = import_sokoban_file('puzzles/puzzle1.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-a = Sokoban(puzzle3)
+a = Sokoban(puzzle1)
 
 resultado = breadth_first_search(a)
 
-print(resultado.solution())
+print(resultado.state)
