@@ -98,7 +98,6 @@ class Sokoban(Problem):
         - 'o': posição dos alvos, tuplo xy.
 
         :param initial: dict descrito acima
-        :param goal: cada caixa estar num dos alvos (ver readme)
         """
 
         super().__init__(initial)
@@ -174,8 +173,8 @@ class Sokoban(Problem):
                     tabuleiro[x+2][y] = BOX_ON_TARGET
                 else:
                     tabuleiro[x+2][y] = BOX
-                caixas.remove((x+1,y))
-                caixas.append((x+2,y))
+                caixas.remove((x+1, y))
+                caixas.append((x+2, y))
 
             elif direcao == UP:
 
@@ -186,8 +185,8 @@ class Sokoban(Problem):
                     tabuleiro[x-2][y] = BOX_ON_TARGET
                 else:
                     tabuleiro[x-2][y] = BOX
-                caixas.remove((x-1,y))
-                caixas.append((x-2,y))
+                caixas.remove((x-1, y))
+                caixas.append((x-2, y))
 
             elif direcao == RIGHT:
 
@@ -198,8 +197,8 @@ class Sokoban(Problem):
                     tabuleiro[x][y+2] = BOX_ON_TARGET
                 else:
                     tabuleiro[x][y+2] = BOX
-                caixas.remove((x,y+1))
-                caixas.append((x,y+2))
+                caixas.remove((x, y+1))
+                caixas.append((x, y+2))
 
             elif direcao == LEFT:
 
@@ -210,8 +209,8 @@ class Sokoban(Problem):
                     tabuleiro[x][y-2] = BOX_ON_TARGET
                 else:
                     tabuleiro[x][y-2] = BOX
-                caixas.remove((x,y-1))
-                caixas.append((x,y-2))
+                caixas.remove((x, y-1))
+                caixas.append((x, y-2))
 
         if state.caixas_alvos(x, y):
             tabuleiro[x][y] = TARGET
