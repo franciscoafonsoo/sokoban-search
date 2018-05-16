@@ -51,3 +51,11 @@ TARGET = "o"
 USHER = "A"
 BOX_ON_TARGET = "@"
 USHER_ON_TARGET = "B"
+
+WALL_EDIT = color.BOLD + WALL + color.END
+
+BOX_EDIT = color.RED + BOX + color.END
+TARGET_EDIT = color.PURPLE + TARGET +  color.END
+USHER_EDIT = color.DARKCYAN + USHER + color.END
+BOX_ON_TARGET_EDIT = color.BLUE + BOX_ON_TARGET + color.END
+USHER_ON_TARGET_EDIT = color.CYAN + USHER_ON_TARGET + color.END

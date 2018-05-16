@@ -60,7 +60,20 @@ class EstadoSokoban:
         represent = ''
         for line in self.tabuleiro:
             for char in line:
-                represent += char
+                if char == USHER:
+                    represent += USHER_EDIT
+                elif char == TARGET:
+                    represent += TARGET_EDIT
+                elif char == BOX:
+                    represent += BOX_EDIT
+                elif char == WALL:
+                    represent += WALL_EDIT
+                elif char == BOX_ON_TARGET:
+                    represent += BOX_ON_TARGET_EDIT
+                elif char == USHER_ON_TARGET:
+                    represent += USHER_ON_TARGET_EDIT
+                else:
+                    represent += char
             represent += '\n'
         return represent
 
@@ -72,11 +85,11 @@ class EstadoSokoban:
         return self.tabuleiro == estado.tabuleiro
 
     def __hash__(self):
-        # TODO
         """Necessário para os algoritmos de procura em grafo."""
         return hash((line for line in self.tabuleiro))
 
 
+# noinspection PyAbstractClass
 class Sokoban(Problem):
     def __init__(self, initial):
         """
@@ -243,9 +256,11 @@ class Sokoban(Problem):
             return c + 1
 
     def __gt__(self):
+        # TODO
         pass
 
     def __hash__(self):
+        # TODO
         return self
 
 
