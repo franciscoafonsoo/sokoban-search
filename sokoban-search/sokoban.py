@@ -2,6 +2,7 @@
 from utils_main import *
 from search import *
 from copy import deepcopy
+from math import sqrt
 
 
 class EstadoSokoban:
@@ -25,7 +26,7 @@ class EstadoSokoban:
             return False
 
     def ver_cima(self, x, y):
-        print(x, y)
+        #print(x, y)
         if self.pos_livre(x-1, y):
             return WALK_UP
         elif self.pos_caixa(x-1, y):
@@ -149,9 +150,9 @@ class Sokoban(Problem):
         arrumador = state.arrumador
         x, y = arrumador
 
-        print(1)
-        print(state)
-        print(action)
+        #print(1)
+        #print(state)
+        #print(action)
         if action is not None:
             accao, direcao = action.split()
         else:
@@ -257,6 +258,19 @@ class Sokoban(Problem):
         elif accao == PUSH:
             return c + 1
 
+    def h1(self, no):
+        """
+        Distância euclidiana do arrumador ao alvo mais próximo dele
+        :param no:
+        :return:
+        """
+        cost = []
+        arrumador = no.state.arrumador
+        for i in no.state.alvos:
+            cost.append(math.sqrt((i[0]-arrumador[0])**2 + (i[1]-arrumador[1])**2))
+        print (min(cost))
+        return min(cost)
+
 
 def import_sokoban_file(filename):
     """
@@ -295,11 +309,19 @@ def import_sokoban_file(filename):
 
 # importar os 3 ficheiros e testar
 puzzle1 = import_sokoban_file('puzzles/puzzle1.txt')
+puzzle1_2 = import_sokoban_file('puzzles/puzzle1_2.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
+puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-a = Sokoban(puzzle1)
+a = Sokoban(puzzle2_1)
 
-resultado = uniform_cost_search(a)
+#resultado = uniform_cost_search(a)
+#print(resultado.state)
 
-print(resultado.state)
+res_gbfs = greedy_best_first_graph_search(a,a.h1)
+print(res_gbfs.solution(),res_gbfs.path_cost)
+print("resultado final\n" + str(res_gbfs.state))
+
+#res_astar = astar_search(a,a.h1)
+#print(res_astar.solution(),res_astar.path_cost)
