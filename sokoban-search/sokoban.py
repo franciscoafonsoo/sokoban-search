@@ -258,7 +258,7 @@ class Sokoban(Problem):
         elif accao == PUSH:
             return c + 1
 
-    def h1(self, no):
+    def heur_euclidean_usher_target(self, no):
         """
         Distância euclidiana do arrumador ao alvo mais próximo dele
         :param no:
@@ -268,7 +268,6 @@ class Sokoban(Problem):
         arrumador = no.state.arrumador
         for i in no.state.alvos:
             cost.append(math.sqrt((i[0]-arrumador[0])**2 + (i[1]-arrumador[1])**2))
-        print (min(cost))
         return min(cost)
 
 
@@ -316,12 +315,13 @@ puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
 a = Sokoban(puzzle2)
 
-#resultado = uniform_cost_search(a)
-#print(resultado.state)
+resultado = uniform_cost_search(a)
+print(resultado.state)
 
-res_gbfs = greedy_best_first_graph_search(a,a.h1)
-print(res_gbfs.solution(),res_gbfs.path_cost)
-print("resultado final\n" + str(res_gbfs.state))
+#res_gbfs = greedy_best_first_graph_search(a,a.heur_euclidean_usher_target)
+#print(res_gbfs.solution(),res_gbfs.path_cost)
+#print("resultado final\n" + str(res_gbfs.state))
 
-#res_astar = astar_search(a,a.h1)
+#res_astar = astar_search(a,a.heur_euclidean_usher_target)
 #print(res_astar.solution(),res_astar.path_cost)
+#print(res_astar.state)
