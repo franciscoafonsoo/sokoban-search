@@ -314,7 +314,7 @@ puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-a = Sokoban(puzzle2_1)
+a = Sokoban(puzzle2)
 
 #resultado = uniform_cost_search(a)
 #print(resultado.state)
