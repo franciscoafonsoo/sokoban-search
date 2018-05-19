@@ -77,11 +77,13 @@ class EstadoSokoban:
             represent += '\n'
         return represent
 
+    def __gt__(self, estado):
+        return self.tabuleiro < estado.tabuleiro
+
     def __eq__(self, estado):
         """Definir em que circunstância os dois estados são considerados iguais.
         Necessário para os algoritmos de procura em grafo.
         """
-
         return self.tabuleiro == estado.tabuleiro
 
     def __hash__(self):
@@ -255,14 +257,6 @@ class Sokoban(Problem):
         elif accao == PUSH:
             return c + 1
 
-    def __gt__(self):
-        # TODO
-        pass
-
-    def __hash__(self):
-        # TODO
-        return self
-
 
 def import_sokoban_file(filename):
     """
@@ -306,6 +300,6 @@ puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
 a = Sokoban(puzzle1)
 
-resultado = breadth_first_search(a)
+resultado = uniform_cost_search(a)
 
 print(resultado.state)
