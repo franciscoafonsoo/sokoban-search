@@ -16,19 +16,15 @@ class EstadoSokoban:
 
     def pos_deadlock_canto(self, x, y):
         try:
-
             # canto superior esquerdo
             if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL:
                 return True
-
             # canto superior direito
             if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL:
                 return True
-
             # canto inferior esquerdo
             if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
                 return True
-
             # canto inferior direito
             if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
                 return True
@@ -40,15 +36,12 @@ class EstadoSokoban:
             # parede em cima
             if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x - 1][y - 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL:
                 return True
-
             # parede em baixo
             if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x + 1][y - 1] == WALL and self.tabuleiro[x + 1][y + 1] == WALL:
                 return True
-
             # parede à direita
             if self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL and self.tabuleiro[x + 1][y + 1] == WALL:
                 return True
-
             # parede à esquerda
             if self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
                 return True
@@ -221,77 +214,60 @@ class Sokoban(Problem):
         else:
             return state
 
-
         if accao == WALK:
             if direcao == DOWN:
                 mover(x+1, y)
-                # tabuleiro[x+1][y] = USHER
-                # arrumador = (x+1, y)
 
             elif direcao == UP:
                 mover(x-1, y)
-                # tabuleiro[x-1][y] = USHER
-                # arrumador = (x-1, y)
 
             elif direcao == RIGHT:
                 mover(x, y+1)
-                # tabuleiro[x][y+1] = USHER
-                # arrumador = (x, y+1)
 
             elif direcao == LEFT:
-                tabuleiro[x][y-1] = USHER
-                arrumador = (x, y-1)
+                mover(x, y - 1)
 
         elif accao == PUSH:
 
             if direcao == DOWN:
-
-                tabuleiro[x + 1][y] = USHER
-                arrumador = (x + 1, y)
+                mover(x + 1, y)
 
                 if (x + 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
                     if state.caixas_alvos(x + 2, y):
                         tabuleiro[x + 2][y] = BOX_ON_TARGET
                     else:
                         tabuleiro[x + 2][y] = BOX
-                    caixas.remove((x + 1, y))
-                    caixas.append((x + 2, y))
+                    caixas.remove((x + 1, y)); caixas.append((x + 2, y))
 
             elif direcao == UP:
+                mover(x - 1, y)
 
-                tabuleiro[x - 1][y] = USHER
-                arrumador = (x - 1, y)
                 if (x - 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
                     if state.caixas_alvos(x - 2, y):
                         tabuleiro[x - 2][y] = BOX_ON_TARGET
                     else:
                         tabuleiro[x - 2][y] = BOX
-                    caixas.remove((x - 1, y))
-                    caixas.append((x - 2, y))
+                    caixas.remove((x - 1, y)); caixas.append((x - 2, y))
 
             elif direcao == RIGHT:
+                mover(x, y + 1)
 
-                tabuleiro[x][y + 1] = USHER
-                arrumador = (x, y + 1)
                 if (x, y + 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
                     if state.caixas_alvos(x, y + 2):
                         tabuleiro[x][y + 2] = BOX_ON_TARGET
                     else:
                         tabuleiro[x][y + 2] = BOX
-                    caixas.remove((x, y + 1))
-                    caixas.append((x, y + 2))
+                    caixas.remove((x, y + 1)); caixas.append((x, y + 2))
 
             elif direcao == LEFT:
+                mover(x, y - 1)
 
-                tabuleiro[x][y - 1] = USHER
-                arrumador = (x, y - 1)
                 if (x, y - 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
                     if state.caixas_alvos(x, y - 2):
                         tabuleiro[x][y - 2] = BOX_ON_TARGET
                     else:
                         tabuleiro[x][y - 2] = BOX
-                    caixas.remove((x, y - 1))
-                    caixas.append((x, y - 2))
+                    caixas.remove((x, y - 1)); caixas.append((x, y - 2))
 
         if state.caixas_alvos(x, y):
             tabuleiro[x][y] = TARGET
