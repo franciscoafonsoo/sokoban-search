@@ -95,7 +95,7 @@ class Node:
             self.depth = parent.depth + 1
 
     def __repr__(self):
-        return "<Node {}>".format(self.state)
+        return "{}".format(self.state)
 
     def __lt__(self, node):
         return self.state < node.state

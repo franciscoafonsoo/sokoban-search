@@ -171,21 +171,20 @@ class Sokoban(Problem):
             – ’o’   – (um ó minúsculo) para representar os alvos;
             – ’A’   – para representar o arrumador.
             – ’@’   – para representar uma caixa numa posição alvo.
-            – ’B’   – para representar o arrumador em cima de uma posição alvo.
+            – ’B’   – TODO: para representar o arrumador em cima de uma posição alvo.
         - 'A': posição do arrumador, tuplo xy.
         - '*': posição das caixas, tuplo xy.
         - 'o': posição dos alvos, tuplo xy.
-
-        :param initial: dict descrito acima
         """
 
         super().__init__(initial)
 
     def actions(self, state):
         """
-        comment behavior later
-        :param state:
-        :return:
+        Retorna as accoes possiveis, dado um estado da classe EstadoSokoban
+
+        :param state: class EstadoSokoban
+        :return: lista de str das accoes possiveis
         """
 
         x, y = state.arrumador
@@ -213,30 +212,35 @@ class Sokoban(Problem):
         arrumador = state.arrumador
         x, y = arrumador
 
+        def mover(x, y):
+            tabuleiro[x][y] = USHER
+            arrumador = (x, y)
+
         if action is not None:
             accao, direcao = action.split()
         else:
             return state
 
+
         if accao == WALK:
             if direcao == DOWN:
-
-                tabuleiro[x + 1][y] = USHER
-                arrumador = (x + 1, y)
+                mover(x+1, y)
+                # tabuleiro[x+1][y] = USHER
+                # arrumador = (x+1, y)
 
             elif direcao == UP:
-
-                tabuleiro[x - 1][y] = USHER
-                arrumador = (x - 1, y)
+                mover(x-1, y)
+                # tabuleiro[x-1][y] = USHER
+                # arrumador = (x-1, y)
 
             elif direcao == RIGHT:
-
-                tabuleiro[x][y + 1] = USHER
-                arrumador = (x, y + 1)
+                mover(x, y+1)
+                # tabuleiro[x][y+1] = USHER
+                # arrumador = (x, y+1)
 
             elif direcao == LEFT:
-                tabuleiro[x][y - 1] = USHER
-                arrumador = (x, y - 1)
+                tabuleiro[x][y-1] = USHER
+                arrumador = (x, y-1)
 
         elif accao == PUSH:
 
