@@ -2,7 +2,7 @@
 from utils_main import *
 from search import *
 from copy import deepcopy
-from math import sqrt
+import math
 
 
 class EstadoSokoban:
@@ -12,6 +12,70 @@ class EstadoSokoban:
         self.caixas = list() if caixas is None else caixas
         self.tabuleiro = list() if tabuleiro is None else tabuleiro
         self.arrumador = tuple() if arrumador is None else arrumador
+        self.deadlocks = self.deadlocks_tabuleiro()
+
+    def pos_deadlock_canto(self, x, y):
+        try:
+
+            # canto superior esquerdo
+            if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL:
+                return True
+
+            # canto superior direito
+            if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL:
+                return True
+
+            # canto inferior esquerdo
+            if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
+                return True
+
+            # canto inferior direito
+            if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
+                return True
+        except IndexError:
+            return False
+
+    def pos_deadlock_parede(self, x, y):
+        try:
+            # parede em cima
+            if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x - 1][y - 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL:
+                return True
+
+            # parede em baixo
+            if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x + 1][y - 1] == WALL and self.tabuleiro[x + 1][y + 1] == WALL:
+                return True
+
+            # parede à direita
+            if self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL and self.tabuleiro[x + 1][y + 1] == WALL:
+                return True
+
+            # parede à esquerda
+            if self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
+                return True
+        except IndexError:
+            return False
+
+    def em_cruzamento(self, x, y):
+        try:
+            for i in self.alvos:
+                if i[0] == x or i[1] == y:
+                    return True
+        except IndexError:
+            return False
+
+    def deadlocks_tabuleiro(self):
+        deadlocks = list()
+        for i in range(0, len(self.tabuleiro)):
+            for j in range(0, len(self.tabuleiro)):
+                if self.pos_deadlock_canto(i, j) and (i, j) not in self.alvos and self.tabuleiro[i][j] != WALL:
+                    if (i, j) not in deadlocks:
+                        deadlocks.append((i, j))
+                if self.pos_deadlock_parede(i, j) and not self.em_cruzamento(i, j) and self.tabuleiro[i][j] != WALL:
+                    if (i, j) not in deadlocks:
+                        deadlocks.append((i, j))
+                pass
+        #print(deadlocks)
+        return deadlocks
 
     def pos_livre(self, x, y):
         try:
@@ -26,32 +90,31 @@ class EstadoSokoban:
             return False
 
     def ver_cima(self, x, y):
-        #print(x, y)
-        if self.pos_livre(x-1, y):
+        if self.pos_livre(x - 1, y):
             return WALK_UP
-        elif self.pos_caixa(x-1, y):
-            if self.pos_livre(x-2, y):
+        elif self.pos_caixa(x - 1, y):
+            if self.pos_livre(x - 2, y):
                 return PUSH_UP
 
     def ver_baixo(self, x, y):
-        if self.pos_livre(x+1, y):
+        if self.pos_livre(x + 1, y):
             return WALK_DOWN
-        elif self.pos_caixa(x+1, y):
-            if self.pos_livre(x+2, y):
+        elif self.pos_caixa(x + 1, y):
+            if self.pos_livre(x + 2, y):
                 return PUSH_DOWN
 
     def ver_esquerda(self, x, y):
-        if self.pos_livre(x, y-1):
+        if self.pos_livre(x, y - 1):
             return WALK_LEFT
-        elif self.pos_caixa(x, y-1):
-            if self.pos_livre(x, y-2):
+        elif self.pos_caixa(x, y - 1):
+            if self.pos_livre(x, y - 2):
                 return PUSH_LEFT
 
     def ver_direita(self, x, y):
-        if self.pos_livre(x, y+1):
+        if self.pos_livre(x, y + 1):
             return WALK_RIGHT
-        elif self.pos_caixa(x, y+1):
-            if self.pos_livre(x, y+2):
+        elif self.pos_caixa(x, y + 1):
+            if self.pos_livre(x, y + 2):
                 return PUSH_RIGHT
 
     def caixas_alvos(self, x, y):
@@ -150,9 +213,6 @@ class Sokoban(Problem):
         arrumador = state.arrumador
         x, y = arrumador
 
-        #print(1)
-        #print(state)
-        #print(action)
         if action is not None:
             accao, direcao = action.split()
         else:
@@ -161,72 +221,73 @@ class Sokoban(Problem):
         if accao == WALK:
             if direcao == DOWN:
 
-                tabuleiro[x+1][y] = USHER
-                arrumador = (x+1, y)
+                tabuleiro[x + 1][y] = USHER
+                arrumador = (x + 1, y)
 
             elif direcao == UP:
 
-                tabuleiro[x-1][y] = USHER
-                arrumador = (x-1, y)
+                tabuleiro[x - 1][y] = USHER
+                arrumador = (x - 1, y)
 
             elif direcao == RIGHT:
 
-                tabuleiro[x][y+1] = USHER
-                arrumador = (x, y+1)
+                tabuleiro[x][y + 1] = USHER
+                arrumador = (x, y + 1)
 
             elif direcao == LEFT:
-                tabuleiro[x][y-1] = USHER
-                arrumador = (x, y-1)
+                tabuleiro[x][y - 1] = USHER
+                arrumador = (x, y - 1)
 
         elif accao == PUSH:
 
             if direcao == DOWN:
 
-                tabuleiro[x+1][y] = USHER
-                arrumador = (x+1, y)
+                tabuleiro[x + 1][y] = USHER
+                arrumador = (x + 1, y)
 
-                if state.caixas_alvos(x+2, y):
-                    tabuleiro[x+2][y] = BOX_ON_TARGET
-                else:
-                    tabuleiro[x+2][y] = BOX
-                caixas.remove((x+1, y))
-                caixas.append((x+2, y))
+                if (x + 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
+                    if state.caixas_alvos(x + 2, y):
+                        tabuleiro[x + 2][y] = BOX_ON_TARGET
+                    else:
+                        tabuleiro[x + 2][y] = BOX
+                    caixas.remove((x + 1, y))
+                    caixas.append((x + 2, y))
 
             elif direcao == UP:
 
-                tabuleiro[x-1][y] = USHER
-                arrumador = (x-1, y)
-
-                if state.caixas_alvos(x-2, y):
-                    tabuleiro[x-2][y] = BOX_ON_TARGET
-                else:
-                    tabuleiro[x-2][y] = BOX
-                caixas.remove((x-1, y))
-                caixas.append((x-2, y))
+                tabuleiro[x - 1][y] = USHER
+                arrumador = (x - 1, y)
+                if (x - 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
+                    if state.caixas_alvos(x - 2, y):
+                        tabuleiro[x - 2][y] = BOX_ON_TARGET
+                    else:
+                        tabuleiro[x - 2][y] = BOX
+                    caixas.remove((x - 1, y))
+                    caixas.append((x - 2, y))
 
             elif direcao == RIGHT:
 
-                tabuleiro[x][y+1] = USHER
-                arrumador = (x, y+1)
-
-                if state.caixas_alvos(x, y+2):
-                    tabuleiro[x][y+2] = BOX_ON_TARGET
-                else:
-                    tabuleiro[x][y+2] = BOX
-                caixas.remove((x, y+1))
-                caixas.append((x, y+2))
+                tabuleiro[x][y + 1] = USHER
+                arrumador = (x, y + 1)
+                if (x, y + 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
+                    if state.caixas_alvos(x, y + 2):
+                        tabuleiro[x][y + 2] = BOX_ON_TARGET
+                    else:
+                        tabuleiro[x][y + 2] = BOX
+                    caixas.remove((x, y + 1))
+                    caixas.append((x, y + 2))
 
             elif direcao == LEFT:
 
-                tabuleiro[x][y-1] = USHER
+                tabuleiro[x][y - 1] = USHER
                 arrumador = (x, y - 1)
-
-                if state.caixas_alvos(x, y-2):
-                    tabuleiro[x][y-2] = BOX_ON_TARGET
-                else:
-                    tabuleiro[x][y-2] = BOX
-                caixas.remove((x, y-1))
-                caixas.append((x, y-2))
+                if (x, y - 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
+                    if state.caixas_alvos(x, y - 2):
+                        tabuleiro[x][y - 2] = BOX_ON_TARGET
+                    else:
+                        tabuleiro[x][y - 2] = BOX
+                    caixas.remove((x, y - 1))
+                    caixas.append((x, y - 2))
 
         if state.caixas_alvos(x, y):
             tabuleiro[x][y] = TARGET
@@ -241,7 +302,6 @@ class Sokoban(Problem):
         list, as specified in the constructor. Override this method if
         checking against a single self.goal is not enough."""
         for x, y in state.alvos:
-
             if state.tabuleiro[x][y] is not BOX_ON_TARGET:
                 return False
         return True
@@ -252,6 +312,8 @@ class Sokoban(Problem):
         is such that the path doesn't matter, this function will only look at
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
+        print(state1)
+        print(state1.deadlocks)
         accao, direcao = action.split()
         if accao == WALK:
             return c + 2
@@ -267,7 +329,7 @@ class Sokoban(Problem):
         cost = []
         arrumador = no.state.arrumador
         for i in no.state.alvos:
-            cost.append(math.sqrt((i[0]-arrumador[0])**2 + (i[1]-arrumador[1])**2))
+            cost.append(math.sqrt((i[0] - arrumador[0]) ** 2 + (i[1] - arrumador[1]) ** 2))
         return min(cost)
 
 
@@ -290,14 +352,14 @@ def import_sokoban_file(filename):
 
             for index, value in enumerate(line):
                 if value is USHER:
-                    estado.arrumador = (len(estado.tabuleiro)-1, index)
+                    estado.arrumador = (len(estado.tabuleiro) - 1, index)
                 elif value is BOX:
-                    estado.caixas.append((len(estado.tabuleiro)-1, index))
+                    estado.caixas.append((len(estado.tabuleiro) - 1, index))
                 elif value is TARGET:
-                    estado.alvos.append((len(estado.tabuleiro)-1, index))
+                    estado.alvos.append((len(estado.tabuleiro) - 1, index))
                 elif value is BOX_ON_TARGET:
                     estado.caixas.append((len(estado.tabuleiro) - 1, index))
-                    estado.alvos.append((len(estado.tabuleiro)-1, index))
+                    estado.alvos.append((len(estado.tabuleiro) - 1, index))
                 elif value is USHER_ON_TARGET:
                     estado.arrumador = (len(estado.tabuleiro) - 1, index)
                     estado.alvos.append((len(estado.tabuleiro) - 1, index))
@@ -318,10 +380,14 @@ a = Sokoban(puzzle2)
 resultado = uniform_cost_search(a)
 print(resultado.state)
 
-#res_gbfs = greedy_best_first_graph_search(a,a.heur_euclidean_usher_target)
-#print(res_gbfs.solution(),res_gbfs.path_cost)
-#print("resultado final\n" + str(res_gbfs.state))
+# res_gbfs = greedy_best_first_graph_search(a,a.heur_euclidean_usher_target)
 
-#res_astar = astar_search(a,a.heur_euclidean_usher_target)
-#print(res_astar.solution(),res_astar.path_cost)
-#print(res_astar.state)
+# print(res_gbfs.solution(),res_gbfs.path_cost)
+
+# print("resultado final\n" + str(res_gbfs.state))
+
+# res_astar = astar_search(a,a.heur_euclidean_usher_target)
+
+# print(res_astar.solution(),res_astar.path_cost)
+
+# print(res_astar.state)
