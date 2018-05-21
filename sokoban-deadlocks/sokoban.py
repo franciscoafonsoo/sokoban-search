@@ -12,7 +12,7 @@ class EstadoSokoban:
         self.caixas = list() if caixas is None else caixas
         self.tabuleiro = list() if tabuleiro is None else tabuleiro
         self.arrumador = tuple() if arrumador is None else arrumador
-        self.deadlocks = self.deadlocks_tabuleiro()
+        #self.deadlocks = self.deadlocks_tabuleiro()
 
     def pos_deadlock_canto(self, x, y):
         try:
@@ -245,49 +245,46 @@ class Sokoban(Problem):
                 tabuleiro[x + 1][y] = USHER
                 arrumador = (x + 1, y)
 
-                if (x + 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
-                    if state.caixas_alvos(x + 2, y):
-                        tabuleiro[x + 2][y] = BOX_ON_TARGET
-                    else:
-                        tabuleiro[x + 2][y] = BOX
-                    caixas.remove((x + 1, y))
-                    caixas.append((x + 2, y))
+
+                if state.caixas_alvos(x + 2, y):
+                    tabuleiro[x + 2][y] = BOX_ON_TARGET
+                else:
+                    tabuleiro[x + 2][y] = BOX
+                caixas.remove((x + 1, y))
+                caixas.append((x + 2, y))
 
             elif direcao == UP:
 
                 tabuleiro[x - 1][y] = USHER
                 arrumador = (x - 1, y)
-                if (x - 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
-                    if state.caixas_alvos(x - 2, y):
-                        tabuleiro[x - 2][y] = BOX_ON_TARGET
-                    else:
-                        tabuleiro[x - 2][y] = BOX
-                    caixas.remove((x - 1, y))
-                    caixas.append((x - 2, y))
+                if state.caixas_alvos(x - 2, y):
+                    tabuleiro[x - 2][y] = BOX_ON_TARGET
+                else:
+                    tabuleiro[x - 2][y] = BOX
+                caixas.remove((x - 1, y))
+                caixas.append((x - 2, y))
 
             elif direcao == RIGHT:
 
                 tabuleiro[x][y + 1] = USHER
                 arrumador = (x, y + 1)
-                if (x, y + 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
-                    if state.caixas_alvos(x, y + 2):
-                        tabuleiro[x][y + 2] = BOX_ON_TARGET
-                    else:
-                        tabuleiro[x][y + 2] = BOX
-                    caixas.remove((x, y + 1))
-                    caixas.append((x, y + 2))
+                if state.caixas_alvos(x, y + 2):
+                    tabuleiro[x][y + 2] = BOX_ON_TARGET
+                else:
+                    tabuleiro[x][y + 2] = BOX
+                caixas.remove((x, y + 1))
+                caixas.append((x, y + 2))
 
             elif direcao == LEFT:
 
                 tabuleiro[x][y - 1] = USHER
                 arrumador = (x, y - 1)
-                if (x, y - 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
-                    if state.caixas_alvos(x, y - 2):
-                        tabuleiro[x][y - 2] = BOX_ON_TARGET
-                    else:
-                        tabuleiro[x][y - 2] = BOX
-                    caixas.remove((x, y - 1))
-                    caixas.append((x, y - 2))
+                if state.caixas_alvos(x, y - 2):
+                    tabuleiro[x][y - 2] = BOX_ON_TARGET
+                else:
+                    tabuleiro[x][y - 2] = BOX
+                caixas.remove((x, y - 1))
+                caixas.append((x, y - 2))
 
         if state.caixas_alvos(x, y):
             tabuleiro[x][y] = TARGET
@@ -302,9 +299,11 @@ class Sokoban(Problem):
         list, as specified in the constructor. Override this method if
         checking against a single self.goal is not enough."""
         for x, y in state.alvos:
-            if state.tabuleiro[x][y] is not BOX_ON_TARGET:
-                return False
-        return True
+            if state.tabuleiro[x][y] == USHER:
+                return True
+            #if state.tabuleiro[x][y] is not BOX_ON_TARGET:
+            #    return True
+        return False
 
     def path_cost(self, c, state1, action, state2):
         """Return the cost of a solution path that arrives at state2 from
