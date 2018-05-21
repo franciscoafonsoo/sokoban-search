@@ -16,7 +16,6 @@ class EstadoSokoban:
 
     def pos_deadlock_canto(self, x, y):
         try:
-
             # canto superior esquerdo
             if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL:
                 return True
@@ -349,44 +348,3 @@ puzzle1_2 = import_sokoban_file('puzzles/puzzle1_2.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
-
-a = Sokoban(puzzle2)
-resultado = uniform_cost_search(a)
-
-# ---------------------------------------
-# -------- Statistics and prints --------
-# ---------------------------------------
-
-if DEBUG:
-    path = resultado.path()
-    solucao = resultado.solution()
-    number_moves = 0
-    number_pushes = 0
-
-    for index, action in enumerate(solucao):
-        accao, _ = action.split()
-        if accao == 'andar':
-            number_moves += 1
-        else:
-            number_pushes += 1
-
-    for index, state in enumerate(path):
-        print(state)
-    else:
-        print('Número de passos:', index)
-
-    print('Números de moves', number_moves)
-    print('Números de pushes', number_pushes)
-
-# ---------------------------------------
-
-#res_gbfs = greedy_best_first_graph_search(a,a.heur_euclidean_usher_target)
-
-#print(res_gbfs.solution(),res_gbfs.path_cost)
-
-# print("resultado final\n" + str(res_gbfs.state))
-
-#res_astar = astar_search(a,a.heur_euclidean_usher_target)
-#print(res_astar.solution(),res_astar.path_cost)
-
-#print(res_astar.state)
