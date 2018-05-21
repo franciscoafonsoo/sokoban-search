@@ -350,10 +350,35 @@ puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-a = Sokoban(puzzle3)
-
+a = Sokoban(puzzle2)
 resultado = uniform_cost_search(a)
-print(resultado.state)
+
+# ---------------------------------------
+# -------- Statistics and prints --------
+# ---------------------------------------
+
+if DEBUG:
+    path = resultado.path()
+    solucao = resultado.solution()
+    number_moves = 0
+    number_pushes = 0
+
+    for index, action in enumerate(solucao):
+        accao, _ = action.split()
+        if accao == 'andar':
+            number_moves += 1
+        else:
+            number_pushes += 1
+
+    for index, state in enumerate(path):
+        print(state)
+    else:
+        print('Número de passos:', index)
+
+    print('Números de moves', number_moves)
+    print('Números de pushes', number_pushes)
+
+# ---------------------------------------
 
 #res_gbfs = greedy_best_first_graph_search(a,a.heur_euclidean_usher_target)
 

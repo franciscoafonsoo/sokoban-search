@@ -1,4 +1,9 @@
 # coding=utf-8
+"""
+DEBUG
+"""
+
+DEBUG = False
 
 """
 #####################################
@@ -59,3 +64,4 @@ TARGET_EDIT = color.PURPLE + TARGET +  color.END
 USHER_EDIT = color.DARKCYAN + USHER + color.END
 BOX_ON_TARGET_EDIT = color.BLUE + BOX_ON_TARGET + color.END
 USHER_ON_TARGET_EDIT = color.CYAN + USHER_ON_TARGET + color.END
+
