@@ -70,10 +70,10 @@ class EstadoSokoban:
                 if self.pos_deadlock_canto(i, j) and (i, j) not in self.alvos and self.tabuleiro[i][j] != WALL:
                     if (i, j) not in deadlocks:
                         deadlocks.append((i, j))
-                if self.pos_deadlock_parede(i, j) and not self.em_cruzamento(i, j) and self.tabuleiro[i][j] != WALL:
-                    if (i, j) not in deadlocks:
-                        deadlocks.append((i, j))
-                pass
+                #if self.pos_deadlock_parede(i, j) and not self.em_cruzamento(i, j) and self.tabuleiro[i][j] != WALL:
+                #    if (i, j) not in deadlocks:
+                #        deadlocks.append((i, j))
+
         #print(deadlocks)
         return deadlocks
 
@@ -85,7 +85,7 @@ class EstadoSokoban:
 
     def pos_caixa(self, x, y):
         try:
-            return self.tabuleiro[x][y] == BOX
+            return self.tabuleiro[x][y] == BOX or self.tabuleiro[x][y] == BOX_ON_TARGET
         except IndexError:
             return False
 
@@ -206,6 +206,7 @@ class Sokoban(Problem):
         """Return the state that results from executing the given
         action in the given state. The action must be one of
         self.actions(state)."""
+        new_x_usher, new_y_usher, new_x_box, new_y_box = 0, 0, 0, 0
 
         alvos = state.alvos
         caixas = deepcopy(state.caixas)
@@ -218,76 +219,51 @@ class Sokoban(Problem):
         else:
             return state
 
-        if accao == WALK:
+        if direcao == DOWN:
+            new_x_usher = x + 1
+            new_y_usher = y
+        elif direcao == UP:
+            new_x_usher = x - 1
+            new_y_usher = y
+        elif direcao == RIGHT:
+            new_x_usher = x
+            new_y_usher = y + 1
+        elif direcao == LEFT:
+            new_x_usher = x
+            new_y_usher = y - 1
+
+        if accao == PUSH:
             if direcao == DOWN:
-
-                tabuleiro[x + 1][y] = USHER
-                arrumador = (x + 1, y)
-
+                new_x_box = x + 2
+                new_y_box = y
             elif direcao == UP:
-
-                tabuleiro[x - 1][y] = USHER
-                arrumador = (x - 1, y)
-
+                new_x_box = x - 2
+                new_y_box = y
             elif direcao == RIGHT:
-
-                tabuleiro[x][y + 1] = USHER
-                arrumador = (x, y + 1)
-
+                new_x_box = x
+                new_y_box = y + 2
             elif direcao == LEFT:
-                tabuleiro[x][y - 1] = USHER
-                arrumador = (x, y - 1)
+                new_x_box = x
+                new_y_box = y - 2
 
-        elif accao == PUSH:
+        if (new_x_box, new_y_box) not in state.deadlocks:
+            if accao == PUSH:
+                if state.caixas_alvos(new_x_box, new_y_box):
+                    tabuleiro[new_x_box][new_y_box] = BOX_ON_TARGET
+                else:
+                    tabuleiro[new_x_box][new_y_box] = BOX
+                caixas.remove((new_x_usher, new_y_usher))
+                caixas.append((new_x_box, new_y_box))
 
-            if direcao == DOWN:
+        # ANDAR (SE FOR TARGET, USHER_ON_TARGET)
 
-                tabuleiro[x + 1][y] = USHER
-                arrumador = (x + 1, y)
+        if tabuleiro[new_x_usher][new_y_usher] == TARGET:
+            tabuleiro[new_x_usher][new_y_usher] = USHER_ON_TARGET
+        else:
+            tabuleiro[new_x_usher][new_y_usher] = USHER
+        arrumador = (new_x_usher, new_y_usher)
 
-                if (x + 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
-                    if state.caixas_alvos(x + 2, y):
-                        tabuleiro[x + 2][y] = BOX_ON_TARGET
-                    else:
-                        tabuleiro[x + 2][y] = BOX
-                    caixas.remove((x + 1, y))
-                    caixas.append((x + 2, y))
-
-            elif direcao == UP:
-
-                tabuleiro[x - 1][y] = USHER
-                arrumador = (x - 1, y)
-                if (x - 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
-                    if state.caixas_alvos(x - 2, y):
-                        tabuleiro[x - 2][y] = BOX_ON_TARGET
-                    else:
-                        tabuleiro[x - 2][y] = BOX
-                    caixas.remove((x - 1, y))
-                    caixas.append((x - 2, y))
-
-            elif direcao == RIGHT:
-
-                tabuleiro[x][y + 1] = USHER
-                arrumador = (x, y + 1)
-                if (x, y + 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
-                    if state.caixas_alvos(x, y + 2):
-                        tabuleiro[x][y + 2] = BOX_ON_TARGET
-                    else:
-                        tabuleiro[x][y + 2] = BOX
-                    caixas.remove((x, y + 1))
-                    caixas.append((x, y + 2))
-
-            elif direcao == LEFT:
-
-                tabuleiro[x][y - 1] = USHER
-                arrumador = (x, y - 1)
-                if (x, y - 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
-                    if state.caixas_alvos(x, y - 2):
-                        tabuleiro[x][y - 2] = BOX_ON_TARGET
-                    else:
-                        tabuleiro[x][y - 2] = BOX
-                    caixas.remove((x, y - 1))
-                    caixas.append((x, y - 2))
+        # SE ARRUMADOR SAIR DO TARGET, INSERIR TARGET OUTRA VEZ
 
         if state.caixas_alvos(x, y):
             tabuleiro[x][y] = TARGET
@@ -376,19 +352,18 @@ puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-a = Sokoban(puzzle3)
+a = Sokoban(puzzle1_2)
 
 resultado = uniform_cost_search(a)
 print(resultado.state)
 
-# res_gbfs = greedy_best_first_graph_search(a,a.heur_euclidean_usher_target)
+#res_gbfs = greedy_best_first_graph_search(a,a.heur_euclidean_usher_target)
 
-# print(res_gbfs.solution(),res_gbfs.path_cost)
+#print(res_gbfs.solution(),res_gbfs.path_cost)
 
 # print("resultado final\n" + str(res_gbfs.state))
 
-# res_astar = astar_search(a,a.heur_euclidean_usher_target)
+#res_astar = astar_search(a,a.heur_euclidean_usher_target)
+#print(res_astar.solution(),res_astar.path_cost)
 
-# print(res_astar.solution(),res_astar.path_cost)
-
-# print(res_astar.state)
+#print(res_astar.state)
