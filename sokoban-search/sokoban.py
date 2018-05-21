@@ -16,19 +16,15 @@ class EstadoSokoban:
 
     def pos_deadlock_canto(self, x, y):
         try:
-
             # canto superior esquerdo
             if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL:
                 return True
-
             # canto superior direito
             if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL:
                 return True
-
             # canto inferior esquerdo
             if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
                 return True
-
             # canto inferior direito
             if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
                 return True
@@ -40,15 +36,12 @@ class EstadoSokoban:
             # parede em cima
             if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x - 1][y - 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL:
                 return True
-
             # parede em baixo
             if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x + 1][y - 1] == WALL and self.tabuleiro[x + 1][y + 1] == WALL:
                 return True
-
             # parede à direita
             if self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL and self.tabuleiro[x + 1][y + 1] == WALL:
                 return True
-
             # parede à esquerda
             if self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
                 return True
@@ -171,21 +164,20 @@ class Sokoban(Problem):
             – ’o’   – (um ó minúsculo) para representar os alvos;
             – ’A’   – para representar o arrumador.
             – ’@’   – para representar uma caixa numa posição alvo.
-            – ’B’   – para representar o arrumador em cima de uma posição alvo.
+            – ’B’   – TODO: para representar o arrumador em cima de uma posição alvo.
         - 'A': posição do arrumador, tuplo xy.
         - '*': posição das caixas, tuplo xy.
         - 'o': posição dos alvos, tuplo xy.
-
-        :param initial: dict descrito acima
         """
 
         super().__init__(initial)
 
     def actions(self, state):
         """
-        comment behavior later
-        :param state:
-        :return:
+        Retorna as accoes possiveis, dado um estado da classe EstadoSokoban
+
+        :param state: class EstadoSokoban
+        :return: lista de str das accoes possiveis
         """
 
         x, y = state.arrumador
@@ -213,6 +205,10 @@ class Sokoban(Problem):
         arrumador = state.arrumador
         x, y = arrumador
 
+        def mover(x, y):
+            tabuleiro[x][y] = USHER
+            arrumador = (x, y)
+
         if action is not None:
             accao, direcao = action.split()
         else:
@@ -220,30 +216,20 @@ class Sokoban(Problem):
 
         if accao == WALK:
             if direcao == DOWN:
-
-                tabuleiro[x + 1][y] = USHER
-                arrumador = (x + 1, y)
+                mover(x + 1, y)
 
             elif direcao == UP:
-
-                tabuleiro[x - 1][y] = USHER
-                arrumador = (x - 1, y)
+                mover(x - 1, y)
 
             elif direcao == RIGHT:
-
-                tabuleiro[x][y + 1] = USHER
-                arrumador = (x, y + 1)
+                mover(x, y + 1)
 
             elif direcao == LEFT:
-                tabuleiro[x][y - 1] = USHER
-                arrumador = (x, y - 1)
+                mover(x, y - 1)
 
         elif accao == PUSH:
-
             if direcao == DOWN:
-
-                tabuleiro[x + 1][y] = USHER
-                arrumador = (x + 1, y)
+                mover(x + 1, y)
 
                 if (x + 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
                     if state.caixas_alvos(x + 2, y):
@@ -254,9 +240,8 @@ class Sokoban(Problem):
                     caixas.append((x + 2, y))
 
             elif direcao == UP:
+                mover(x - 1, y)
 
-                tabuleiro[x - 1][y] = USHER
-                arrumador = (x - 1, y)
                 if (x - 2, y) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
                     if state.caixas_alvos(x - 2, y):
                         tabuleiro[x - 2][y] = BOX_ON_TARGET
@@ -266,9 +251,8 @@ class Sokoban(Problem):
                     caixas.append((x - 2, y))
 
             elif direcao == RIGHT:
+                mover(x, y + 1)
 
-                tabuleiro[x][y + 1] = USHER
-                arrumador = (x, y + 1)
                 if (x, y + 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
                     if state.caixas_alvos(x, y + 2):
                         tabuleiro[x][y + 2] = BOX_ON_TARGET
@@ -278,9 +262,8 @@ class Sokoban(Problem):
                     caixas.append((x, y + 2))
 
             elif direcao == LEFT:
+                mover(x, y - 1)
 
-                tabuleiro[x][y - 1] = USHER
-                arrumador = (x, y - 1)
                 if (x, y - 2) not in state.deadlocks: #verifica se a posição para onde vai a caixa é uma posição deadlock
                     if state.caixas_alvos(x, y - 2):
                         tabuleiro[x][y - 2] = BOX_ON_TARGET
@@ -375,7 +358,7 @@ puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 
-a = Sokoban(puzzle2)
+a = Sokoban(puzzle1)
 
 resultado = uniform_cost_search(a)
 #print(resultado.state)
