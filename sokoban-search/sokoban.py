@@ -78,7 +78,7 @@ class EstadoSokoban:
 
     def pos_caixa(self, x, y):
         try:
-            return self.tabuleiro[x][y] == BOX or self.tabuleiro[x][y] == BOX_ON_TARGET
+            return self.tabuleiro[x][y] == BOX
         except IndexError:
             return False
 
@@ -296,7 +296,7 @@ class Sokoban(Problem):
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
         print(state1)
-        # print(state1.deadlocks)
+        print(state1.deadlocks)
         accao, direcao = action.split()
         if accao == WALK:
             return c + 2
@@ -361,7 +361,7 @@ puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 a = Sokoban(puzzle1)
 
 resultado = uniform_cost_search(a)
-#print(resultado.state)
+print(resultado.state)
 
 # res_gbfs = greedy_best_first_graph_search(a,a.heur_euclidean_usher_target)
 
