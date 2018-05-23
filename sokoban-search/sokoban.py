@@ -313,24 +313,29 @@ def heur_euclidean_usher_target(nodo):
     return min(cost)
 
 
-def heur_manhattan(nodo):
-    """Distância de manhattan de cada caixa aos alvos."""
-    cost = []
+from munkres import Munkres
+
+def hung_alg_manh(nodo):
+    """Algoritmo hungaro, em que o custo de cada caixa a um alvo é a distância de manhattan."""
+    m = Munkres()
+        
     caixas = nodo.state.caixas
     alvos = nodo.state.alvos
-
+    custo = list()
     mhd = 0
 
-    for i in caixas:
-        for j in alvos:
-            mhd = abs(i[0] - j[0]) + abs(i[1] - j[1]) + mhd
-
+    for index, c in enumerate(caixas):
+        custo.append(list())
+        for a in alvos:
+            custo[index].append(abs(c[0] - a[0]) + abs(c[1] - a[1]))
+    
+    indexes = m.compute(custo)
+    for row, column in indexes:
+        value = custo[row][column]
+        mhd += value
+    
+    print(mhd)
     return mhd
-
-def max_heuristic(node):
-    score1 = heur_manhattan(node)
-    score2 = heur_euclidean_usher_target(node)
-    return max(score1, score2)
 
 
 def import_sokoban_file(filename):
