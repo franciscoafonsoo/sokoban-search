@@ -313,10 +313,14 @@ def heur_euclidean_usher_target(nodo):
     return min(cost)
 
 
-from munkres import Munkres
+from hungarian import Munkres
 
 def hung_alg_manh(nodo):
-    """Algoritmo hungaro, em que o custo de cada caixa a um alvo é a distância de manhattan."""
+    """
+    Algoritmo hungaro, em que o custo de cada caixa a um alvo é a distância de manhattan.
+    
+    Explicação no relatório.
+    """
     m = Munkres()
         
     caixas = nodo.state.caixas
@@ -333,8 +337,7 @@ def hung_alg_manh(nodo):
     for row, column in indexes:
         value = custo[row][column]
         mhd += value
-    
-    print(mhd)
+
     return mhd
 
 
