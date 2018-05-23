@@ -1,7 +1,6 @@
 from sokoban import *
 import time
 
-
 def timing(f):
     def wrap(*args):
         time1 = time.time()
@@ -12,36 +11,37 @@ def timing(f):
     return wrap
 
 
+sokoban = Sokoban(puzzle2)
+
 @timing
-def execute():
-    a = Sokoban(puzzle2)
-    resultado = uniform_cost_search(a)
+def statistics(resultado, verbose=False):
+    '''Metodo concreto para imprimir dados da resolução de um problema Sokoban'''
+    path = resultado.path()
+    solucao = resultado.solution()
+    number_moves = 0
+    number_pushes = 0
 
-    # ---------------------------------------
-    # -------- Statistics and prints --------
-    # ---------------------------------------
-
-    if DEBUG:
-        path = resultado.path()
-        solucao = resultado.solution()
-        number_moves = 0
-        number_pushes = 0
-
-        for index, action in enumerate(solucao):
-            accao, _ = action.split()
-            if accao == 'andar':
-                number_moves += 1
-            else:
-                number_pushes += 1
-
-        for index, state in enumerate(path):
-            print(state)
+    for index, action in enumerate(solucao):
+        accao, _ = action.split()
+        if accao == 'andar':
+            number_moves += 1
         else:
-            print('Número de passos:', index)
+            number_pushes += 1
 
-        print('Números de moves:', number_moves)
-        print('Números de pushes:', number_pushes)
+    for index, state in enumerate(path):
+        if verbose:
+            print(state)
+    else:
+        print('Número de passos:', index)
 
-    # ---------------------------------------
+    print('Números de moves:', number_moves)
+    print('Números de pushes:', number_pushes)
 
-execute()
+
+bfs_resultado = breadth_first_search(sokoban)
+ucs_resultado = uniform_cost_search(sokoban)
+astar_resultado = astar_search(sokoban, max_heuristic)
+
+statistics(astar_resultado)
+statistics(bfs_resultado)
+statistics(ucs_resultado)

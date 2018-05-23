@@ -4,6 +4,8 @@ from search import *
 from copy import deepcopy
 import math
 
+# ______________________________________________________________________________
+# Definição de um estado do Problema
 
 class EstadoSokoban:
 
@@ -153,6 +155,8 @@ class EstadoSokoban:
         """Necessário para os algoritmos de procura em grafo."""
         return hash((line for line in self.tabuleiro))
 
+# ______________________________________________________________________________
+# Implementação do Problema
 
 # noinspection PyAbstractClass
 class Sokoban(Problem):
@@ -202,11 +206,10 @@ class Sokoban(Problem):
         return accoes
 
     def result(self, state, action):
-        """Return the state that results from executing the given
-        action in the given state. The action must be one of
-        self.actions(state)."""
+        # posição do arrumador e da caixa no fim da acção
         new_x_usher, new_y_usher, new_x_box, new_y_box = 0, 0, 0, 0
 
+        # variaveis necessarias para determinar o resultado de uma acção
         alvos = state.alvos
         caixas = deepcopy(state.caixas)
         tabuleiro = deepcopy(state.tabuleiro)
@@ -218,6 +221,7 @@ class Sokoban(Problem):
         else:
             return state
 
+        # determinar em que direcção é que vamos mover o arrumador e a caixa (no caso de empurrar)
         if direcao == DOWN:
             new_x_usher = x + 1
             new_y_usher = y
@@ -245,6 +249,7 @@ class Sokoban(Problem):
                 new_x_box = x
                 new_y_box = y - 2
 
+        # verificar deadlocks antes de executar a accao EMPURRAR
         if (new_x_box, new_y_box) not in state.deadlocks:
             if accao == PUSH:
                 if state.caixas_alvos(new_x_box, new_y_box):
@@ -255,7 +260,6 @@ class Sokoban(Problem):
                 caixas.append((new_x_box, new_y_box))
 
             # ANDAR (SE FOR TARGET, USHER_ON_TARGET)
-
             if tabuleiro[new_x_usher][new_y_usher] == TARGET:
                 tabuleiro[new_x_usher][new_y_usher] = USHER_ON_TARGET
             else:
@@ -263,7 +267,6 @@ class Sokoban(Problem):
             arrumador = (new_x_usher, new_y_usher)
 
             # SE ARRUMADOR SAIR DO TARGET, INSERIR TARGET OUTRA VEZ
-
             if state.caixas_alvos(x, y):
                 tabuleiro[x][y] = TARGET
             else:
@@ -294,17 +297,40 @@ class Sokoban(Problem):
         elif accao == PUSH:
             return c + 1
 
-    def heur_euclidean_usher_target(self, no):
-        """
-        Distância euclidiana do arrumador ao alvo mais próximo dele
-        :param no:
-        :return:
-        """
-        cost = []
-        arrumador = no.state.arrumador
-        for i in no.state.alvos:
-            cost.append(math.sqrt((i[0] - arrumador[0]) ** 2 + (i[1] - arrumador[1]) ** 2))
-        return min(cost)
+# ______________________________________________________________________________
+# Heuristicas
+    
+def heur_euclidean_usher_target(nodo):
+    """
+    Distância euclidiana do arrumador ao alvo mais próximo dele
+    :param no:
+    :return:
+    """
+    cost = []
+    arrumador = nodo.state.arrumador
+    for i in nodo.state.alvos:
+        cost.append(math.sqrt((i[0] - arrumador[0]) ** 2 + (i[1] - arrumador[1]) ** 2))
+    return min(cost)
+
+
+def heur_manhattan(nodo):
+    """Distância de manhattan de cada caixa aos alvos."""
+    cost = []
+    caixas = nodo.state.caixas
+    alvos = nodo.state.alvos
+
+    mhd = 0
+
+    for i in caixas:
+        for j in alvos:
+            mhd = abs(i[0] - j[0]) + abs(i[1] - j[1]) + mhd
+
+    return mhd
+
+def max_heuristic(node):
+    score1 = heur_manhattan(node)
+    score2 = heur_euclidean_usher_target(node)
+    return max(score1, score2)
 
 
 def import_sokoban_file(filename):
