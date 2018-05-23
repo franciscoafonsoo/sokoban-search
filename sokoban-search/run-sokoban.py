@@ -42,6 +42,6 @@ bfs_resultado = breadth_first_search(sokoban)
 ucs_resultado = uniform_cost_search(sokoban)
 astar_resultado = astar_search(sokoban, hung_alg_manh)
 
-statistics(astar_resultado)
+statistics(astar_resultado, True)
 statistics(bfs_resultado)
 statistics(ucs_resultado)

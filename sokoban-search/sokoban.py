@@ -127,6 +127,8 @@ class EstadoSokoban:
             for char in line:
                 if char == USHER:
                     represent += USHER_EDIT
+                elif char == FREE:
+                    represent += ' '  
                 elif char == TARGET:
                     represent += TARGET_EDIT
                 elif char == BOX:
