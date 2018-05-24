@@ -36,27 +36,57 @@ class EstadoSokoban:
         except IndexError:
             return False
 
-    def pos_deadlock_parede(self, x, y):
+    def deadlock_parede(self, deadlocks_cantos):
         try:
-            # parede em cima
-            if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x - 1][y - 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL:
-                return True
+            auxiliar = list()
+            auxiliar_boolean = list()
+            deadlocks_paredes = list()
+            for canto1 in deadlocks_cantos:
+                for canto2 in deadlocks_cantos:
+                    if canto1 != canto2:
+                        canto1_x = canto1[0]
+                        canto1_y = canto1[1]
 
-            # parede em baixo
-            if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x + 1][y - 1] == WALL and self.tabuleiro[x + 1][y + 1] == WALL:
-                return True
+                        canto2_x = canto2[0]
+                        canto2_y = canto2[1]
 
-            # parede à direita
-            if self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL and self.tabuleiro[x + 1][y + 1] == WALL:
-                return True
+                        if canto1_x == canto2_x:
+                            #print("horizontal", canto1, canto2)
+                            auxiliar = list()
+                            auxiliar_boolean = list()
+                            for i in range(canto1_y, canto2_y):
 
-            # parede à esquerda
-            if self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
-                return True
+                                if self.tabuleiro[canto1_x + 1][i] == WALL and self.tabuleiro[canto1_x][i] != WALL:
+                                    auxiliar.append((canto1_x,i))
+                                    auxiliar_boolean.append(True)
+                                elif self.tabuleiro[canto1_x - 1][i] == WALL and self.tabuleiro[canto1_x][i] != WALL:
+                                    auxiliar.append((canto1_x,i))
+                                    auxiliar_boolean.append(True)
+                                else:
+                                    auxiliar_boolean.append(False)
+                        elif canto1_y == canto2_y:
+                            #print("vertical", canto1, canto2)
+                            auxiliar = list()
+                            auxiliar_boolean = list()
+                            for i in range(canto1_x, canto2_x):
+                                if self.tabuleiro[i][canto1_y + 1] == WALL and self.tabuleiro[i][canto1_y] != WALL:
+                                    auxiliar.append((i, canto1_y))
+                                    auxiliar_boolean.append(True)
+                                elif self.tabuleiro[i][canto1_y - 1] == WALL and self.tabuleiro[i][canto1_y] != WALL:
+                                    auxiliar.append((i, canto1_y))
+                                    auxiliar_boolean.append(True)
+                                else:
+                                    auxiliar_boolean.append(False)
+
+
+                    if False not in auxiliar_boolean:
+                        for i in auxiliar:
+                            deadlocks_paredes.append(i)
+            return deadlocks_paredes
         except IndexError:
             return False
 
-    def em_cruzamento(self, x, y):
+    def em_cruzamento_com_alvo(self, x, y):
         try:
             for i in self.alvos:
                 if i[0] == x or i[1] == y:
@@ -66,15 +96,16 @@ class EstadoSokoban:
 
     def deadlocks_tabuleiro(self):
         deadlocks = list()
-        for i in range(0, len(self.tabuleiro)):
-            for j in range(0, len(self.tabuleiro)):
+        for i,lista in enumerate(self.tabuleiro):
+            for j in range(0, len(lista)):
                 if self.pos_deadlock_canto(i, j) and (i, j) not in self.alvos and self.tabuleiro[i][j] != WALL:
                     if (i, j) not in deadlocks:
                         deadlocks.append((i, j))
-                #if self.pos_deadlock_parede(i, j) and not self.em_cruzamento(i, j) and self.tabuleiro[i][j] != WALL:
-                #    if (i, j) not in deadlocks:
-                #        deadlocks.append((i, j))
-
+        deadlocks_paredes = self.deadlock_parede(deadlocks)
+        if deadlocks_paredes != None:
+            for i in deadlocks_paredes:
+                if i not in deadlocks:
+                    deadlocks.append(i)
         #print(deadlocks)
         return deadlocks
 
@@ -292,10 +323,10 @@ class Sokoban(Problem):
         is such that the path doesn't matter, this function will only look at
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
-
+        #print(c)
         accao, direcao = action.split()
         if accao == WALK:
-            return c + 2
+            return c + 1
         elif accao == PUSH:
             return c + 1
 
@@ -334,12 +365,10 @@ def hung_alg_manh(nodo):
         custo.append(list())
         for a in alvos:
             custo[index].append(abs(c[0] - a[0]) + abs(c[1] - a[1]))
-    
     indexes = m.compute(custo)
     for row, column in indexes:
         value = custo[row][column]
         mhd += value
-
     return mhd
 
 
@@ -384,3 +413,8 @@ puzzle1_2 = import_sokoban_file('puzzles/puzzle1_2.txt')
 puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
 puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
+puzzle3_1 = import_sokoban_file('puzzles/puzzle3_1.txt')
+puzzle3_2 = import_sokoban_file('puzzles/puzzle3_2.txt')
+
+puzzle4 = import_sokoban_file('puzzles/puzzle4.txt')
+puzzle5 = import_sokoban_file('puzzles/puzzle5.txt')

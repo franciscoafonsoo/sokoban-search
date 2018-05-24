@@ -3,7 +3,9 @@
 DEBUG
 """
 
-DEBUG = True
+DEBUG = False
+
+MAX_CONTADOR = 100000
 
 """
 #####################################

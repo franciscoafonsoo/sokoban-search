@@ -10,12 +10,13 @@ def timing(f):
         return ret
     return wrap
 
-
-sokoban = Sokoban(puzzle2)
+sokoban = Sokoban(puzzle4)
 
 @timing
 def statistics(resultado, verbose=False):
     '''Metodo concreto para imprimir dados da resolução de um problema Sokoban'''
+
+    # TODO - try except quando path e solution não existem
     path = resultado.path()
     solucao = resultado.solution()
     number_moves = 0
@@ -38,10 +39,10 @@ def statistics(resultado, verbose=False):
     print('Números de pushes:', number_pushes)
 
 
-bfs_resultado = breadth_first_search(sokoban)
-ucs_resultado = uniform_cost_search(sokoban)
+#bfs_resultado = breadth_first_search(sokoban)
+#ucs_resultado = uniform_cost_search(sokoban)
 astar_resultado = astar_search(sokoban, hung_alg_manh)
 
 statistics(astar_resultado, True)
-statistics(bfs_resultado)
-statistics(ucs_resultado)
+#statistics(bfs_resultado)
+#statistics(ucs_resultado)

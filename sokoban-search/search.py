@@ -249,6 +249,7 @@ def best_first_graph_search(problem, f):
     There is a subtlety: the line "f = memoize(f, 'f')" means that the f
     values will be cached on the nodes as they are computed. So after doing
     a best first search you can examine the f values of the path returned."""
+
     f = memoize(f, 'f')
     node = Node(problem.initial)
     if problem.goal_test(node.state):
@@ -256,12 +257,15 @@ def best_first_graph_search(problem, f):
     frontier = PriorityQueue(min, f)
     frontier.append(node)
     explored = set()
+    count = 0
     while frontier:
+
         node = frontier.pop()
         if problem.goal_test(node.state):
             return node
         explored.add(node.state)
         for child in node.expand(problem):
+            count += 1
             if child.state not in explored and child not in frontier:
                 frontier.append(child)
             elif child in frontier:
@@ -269,6 +273,7 @@ def best_first_graph_search(problem, f):
                 if f(child) < f(incumbent):
                     del frontier[incumbent]
                     frontier.append(child)
+        #print (count)
     return None
 
 
