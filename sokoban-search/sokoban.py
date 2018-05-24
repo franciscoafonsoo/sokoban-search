@@ -173,7 +173,7 @@ class EstadoSokoban:
                 else:
                     represent += char
             represent += '\n'
-        return represent
+        return ""
 
     def __gt__(self, estado):
         return self.tabuleiro < estado.tabuleiro

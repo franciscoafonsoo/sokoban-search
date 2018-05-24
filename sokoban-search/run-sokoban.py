@@ -28,10 +28,13 @@ def statistics(resultado, verbose=False):
             number_moves += 1
         else:
             number_pushes += 1
-
+    count = 0
     for index, state in enumerate(path):
+        count += 1
         if verbose:
-            print(state)
+            time.sleep(0.1)
+            print(state,end="\r")
+            #print("ola " + str(count) + "\n", end="\r")
     else:
         print('Número de passos:', index)
 
@@ -41,7 +44,11 @@ def statistics(resultado, verbose=False):
 
 #bfs_resultado = breadth_first_search(sokoban)
 #ucs_resultado = uniform_cost_search(sokoban)
-astar_resultado = astar_search(sokoban, hung_alg_manh)
+#astar_resultado = astar_search(sokoban, hung_alg_manh)
+
+#statistics(astar_resultado, True)
+
+astar_resultado = greedy_best_first_graph_search(sokoban, hung_alg_manh)
 
 statistics(astar_resultado, True)
 #statistics(bfs_resultado)
