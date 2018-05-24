@@ -33,7 +33,8 @@ def statistics(resultado, verbose=False):
         count += 1
         if verbose:
             time.sleep(0.1)
-            print(state,end="\r")
+            print(state, end='\r')
+
             #print("ola " + str(count) + "\n", end="\r")
     else:
         print('Número de passos:', index)

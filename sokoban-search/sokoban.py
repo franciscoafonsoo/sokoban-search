@@ -173,7 +173,7 @@ class EstadoSokoban:
                 else:
                     represent += char
             represent += '\n'
-        return ""
+        return represent
 
     def __gt__(self, estado):
         return self.tabuleiro < estado.tabuleiro
@@ -369,7 +369,7 @@ def hung_alg_manh(nodo):
     for row, column in indexes:
         value = custo[row][column]
         mhd += value
-    return mhd
+    return mhd + heur_euclidean_usher_target(nodo)
 
 
 def import_sokoban_file(filename):
