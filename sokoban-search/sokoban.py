@@ -1,11 +1,13 @@
 # coding=utf-8
 from utils_main import *
 from search import *
+from hungarian import Munkres
 from copy import deepcopy
 import math
 
 # ______________________________________________________________________________
 # Definição de um estado do Problema
+
 
 class EstadoSokoban:
 
@@ -98,6 +100,8 @@ class EstadoSokoban:
 # Implementação do Problema
 
 # noinspection PyAbstractClass
+
+
 class Sokoban(Problem):
     def __init__(self, initial):
         """
@@ -129,19 +133,23 @@ class Sokoban(Problem):
     def pos_deadlock_canto(self, x, y):
         try:
             # canto superior esquerdo
-            if self.tabuleiro_inicial[x - 1][y] == WALL and self.tabuleiro_inicial[x][y - 1] == WALL and self.tabuleiro_inicial[x - 1][y - 1] == WALL:
+            if self.tabuleiro_inicial[x - 1][y] == WALL and self.tabuleiro_inicial[x][y - 1] == WALL and \
+                    self.tabuleiro_inicial[x - 1][y - 1] == WALL:
                 return True
 
             # canto superior direito
-            if self.tabuleiro_inicial[x - 1][y] == WALL and self.tabuleiro_inicial[x][y + 1] == WALL and self.tabuleiro_inicial[x - 1][y + 1] == WALL:
+            if self.tabuleiro_inicial[x - 1][y] == WALL and self.tabuleiro_inicial[x][y + 1] == WALL and \
+                    self.tabuleiro_inicial[x - 1][y + 1] == WALL:
                 return True
 
             # canto inferior esquerdo
-            if self.tabuleiro_inicial[x + 1][y] == WALL and self.tabuleiro_inicial[x][y - 1] == WALL and self.tabuleiro_inicial[x + 1][y - 1] == WALL:
+            if self.tabuleiro_inicial[x + 1][y] == WALL and self.tabuleiro_inicial[x][y - 1] == WALL and \
+                    self.tabuleiro_inicial[x + 1][y - 1] == WALL:
                 return True
 
             # canto inferior direito
-            if self.tabuleiro_inicial[x + 1][y] == WALL and self.tabuleiro_inicial[x][y + 1] == WALL and self.tabuleiro_inicial[x + 1][y - 1] == WALL:
+            if self.tabuleiro_inicial[x + 1][y] == WALL and self.tabuleiro_inicial[x][y + 1] == WALL and \
+                    self.tabuleiro_inicial[x + 1][y - 1] == WALL:
                 return True
         except IndexError:
             return False
@@ -161,28 +169,32 @@ class Sokoban(Problem):
                         canto2_y = canto2[1]
 
                         if canto1_x == canto2_x:
-                            #print("horizontal", canto1, canto2)
+                            # print("horizontal", canto1, canto2)
                             auxiliar = list()
                             auxiliar_boolean = list()
                             for i in range(canto1_y, canto2_y):
 
-                                if self.tabuleiro_inicial[canto1_x + 1][i] == WALL and self.tabuleiro_inicial[canto1_x][i] != WALL:
-                                    auxiliar.append((canto1_x,i))
+                                if self.tabuleiro_inicial[canto1_x + 1][i] == WALL and \
+                                        self.tabuleiro_inicial[canto1_x][i] != WALL:
+                                    auxiliar.append((canto1_x, i))
                                     auxiliar_boolean.append(True)
-                                elif self.tabuleiro_inicial[canto1_x - 1][i] == WALL and self.tabuleiro_inicial[canto1_x][i] != WALL:
-                                    auxiliar.append((canto1_x,i))
+                                elif self.tabuleiro_inicial[canto1_x - 1][i] == WALL and \
+                                        self.tabuleiro_inicial[canto1_x][i] != WALL:
+                                    auxiliar.append((canto1_x, i))
                                     auxiliar_boolean.append(True)
                                 else:
                                     auxiliar_boolean.append(False)
                         elif canto1_y == canto2_y:
-                            #print("vertical", canto1, canto2)
+                            # print("vertical", canto1, canto2)
                             auxiliar = list()
                             auxiliar_boolean = list()
                             for i in range(canto1_x, canto2_x):
-                                if self.tabuleiro_inicial[i][canto1_y + 1] == WALL and self.tabuleiro_inicial[i][canto1_y] != WALL:
+                                if self.tabuleiro_inicial[i][canto1_y + 1] == WALL and \
+                                        self.tabuleiro_inicial[i][canto1_y] != WALL:
                                     auxiliar.append((i, canto1_y))
                                     auxiliar_boolean.append(True)
-                                elif self.tabuleiro_inicial[i][canto1_y - 1] == WALL and self.tabuleiro_inicial[i][canto1_y] != WALL:
+                                elif self.tabuleiro_inicial[i][canto1_y - 1] == WALL and \
+                                        self.tabuleiro_inicial[i][canto1_y] != WALL:
                                     auxiliar.append((i, canto1_y))
                                     auxiliar_boolean.append(True)
                                 else:
@@ -205,17 +217,18 @@ class Sokoban(Problem):
 
     def deadlocks_tabuleiro(self):
         deadlocks = list()
-        for i,lista in enumerate(self.tabuleiro_inicial):
+        for i, lista in enumerate(self.tabuleiro_inicial):
             for j in range(0, len(lista)):
-                if self.pos_deadlock_canto(i, j) and (i, j) not in self.estado_inicial.alvos and self.tabuleiro_inicial[i][j] != WALL:
+                if self.pos_deadlock_canto(i, j) and (i, j) not in self.estado_inicial.alvos and \
+                        self.tabuleiro_inicial[i][j] != WALL:
                     if (i, j) not in deadlocks:
                         deadlocks.append((i, j))
         deadlocks_paredes = self.deadlock_parede(deadlocks)
-        if deadlocks_paredes != None:
+        if deadlocks_paredes is not None:
             for i in deadlocks_paredes:
                 if i not in deadlocks:
                     deadlocks.append(i)
-        #print(deadlocks)
+        # print(deadlocks)
         return deadlocks
 
     def actions(self, state):
@@ -324,7 +337,7 @@ class Sokoban(Problem):
         is such that the path doesn't matter, this function will only look at
         state2.  If the path does matter, it will consider c and maybe state1
         and action. The default method costs 1 for every step in the path."""
-        #print(c)
+        # print(c)
         accao, direcao = action.split()
         if accao == WALK:
             return c + 1
@@ -334,10 +347,11 @@ class Sokoban(Problem):
 # ______________________________________________________________________________
 # Heuristicas
     
+
 def heur_euclidean_usher_target(nodo):
     """
     Distância euclidiana do arrumador ao alvo mais próximo dele
-    :param no:
+    :param nodo:
     :return:
     """
     cost = []
@@ -346,10 +360,11 @@ def heur_euclidean_usher_target(nodo):
         cost.append(math.sqrt((i[0] - arrumador[0]) ** 2 + (i[1] - arrumador[1]) ** 2))
     return min(cost)
 
+
 def heur_euclidean_usher_box(nodo):
     """
     Distância euclidiana do arrumador ao alvo mais próximo dele
-    :param no:
+    :param nodo:
     :return:
     """
     cost = []
@@ -358,7 +373,6 @@ def heur_euclidean_usher_box(nodo):
         cost.append(math.sqrt((i[0] - arrumador[0]) ** 2 + (i[1] - arrumador[1]) ** 2))
     return min(cost)
 
-from hungarian import Munkres
 
 def hung_alg_manh_usher_to_target(nodo):
     """
@@ -407,6 +421,7 @@ def hung_alg_manh_usher_to_box(nodo):
         mhd += value
     return mhd + heur_euclidean_usher_box(nodo)
 
+
 def hung_alg_manh(nodo):
     """
     Algoritmo hungaro, em que o custo de cada caixa a um alvo é a distância de manhattan.
@@ -429,6 +444,7 @@ def hung_alg_manh(nodo):
         value = custo[row][column]
         mhd += value
     return mhd
+
 
 def import_sokoban_file(filename):
     """
