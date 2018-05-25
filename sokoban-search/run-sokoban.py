@@ -10,9 +10,8 @@ def timing(f):
         return ret
     return wrap
 
-sokoban = Sokoban(puzzle4)
+sokoban = Sokoban(puzzle3)
 
-@timing
 def statistics(resultado, verbose=False):
     '''Metodo concreto para imprimir dados da resolução de um problema Sokoban'''
 
@@ -32,7 +31,7 @@ def statistics(resultado, verbose=False):
     for index, state in enumerate(path):
         count += 1
         if verbose:
-            time.sleep(0.1)
+            #time.sleep(0.1)
             print(state, end='\r')
 
             #print("ola " + str(count) + "\n", end="\r")
@@ -49,8 +48,11 @@ def statistics(resultado, verbose=False):
 
 #statistics(astar_resultado, True)
 
+inicio = time.time()
 astar_resultado = greedy_best_first_graph_search(sokoban, hung_alg_manh)
-
+fim = time.time()
 statistics(astar_resultado, True)
+
+print("Tempo de execução", '{0:.2f}'.format(fim-inicio))
 #statistics(bfs_resultado)
 #statistics(ucs_resultado)
