@@ -14,100 +14,6 @@ class EstadoSokoban:
         self.caixas = list() if caixas is None else caixas
         self.tabuleiro = list() if tabuleiro is None else tabuleiro
         self.arrumador = tuple() if arrumador is None else arrumador
-        self.deadlocks = self.deadlocks_tabuleiro()
-
-    def pos_deadlock_canto(self, x, y):
-        try:
-            # canto superior esquerdo
-            if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x - 1][y - 1] == WALL:
-                return True
-
-            # canto superior direito
-            if self.tabuleiro[x - 1][y] == WALL and self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x - 1][y + 1] == WALL:
-                return True
-
-            # canto inferior esquerdo
-            if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x][y - 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
-                return True
-
-            # canto inferior direito
-            if self.tabuleiro[x + 1][y] == WALL and self.tabuleiro[x][y + 1] == WALL and self.tabuleiro[x + 1][y - 1] == WALL:
-                return True
-        except IndexError:
-            return False
-
-    def deadlock_parede(self, deadlocks_cantos):
-        try:
-            auxiliar = list()
-            auxiliar_boolean = list()
-            deadlocks_paredes = list()
-            for canto1 in deadlocks_cantos:
-                for canto2 in deadlocks_cantos:
-                    if canto1 != canto2:
-                        canto1_x = canto1[0]
-                        canto1_y = canto1[1]
-
-                        canto2_x = canto2[0]
-                        canto2_y = canto2[1]
-
-                        if canto1_x == canto2_x:
-                            #print("horizontal", canto1, canto2)
-                            auxiliar = list()
-                            auxiliar_boolean = list()
-                            for i in range(canto1_y, canto2_y):
-
-                                if self.tabuleiro[canto1_x + 1][i] == WALL and self.tabuleiro[canto1_x][i] != WALL:
-                                    auxiliar.append((canto1_x,i))
-                                    auxiliar_boolean.append(True)
-                                elif self.tabuleiro[canto1_x - 1][i] == WALL and self.tabuleiro[canto1_x][i] != WALL:
-                                    auxiliar.append((canto1_x,i))
-                                    auxiliar_boolean.append(True)
-                                else:
-                                    auxiliar_boolean.append(False)
-                        elif canto1_y == canto2_y:
-                            #print("vertical", canto1, canto2)
-                            auxiliar = list()
-                            auxiliar_boolean = list()
-                            for i in range(canto1_x, canto2_x):
-                                if self.tabuleiro[i][canto1_y + 1] == WALL and self.tabuleiro[i][canto1_y] != WALL:
-                                    auxiliar.append((i, canto1_y))
-                                    auxiliar_boolean.append(True)
-                                elif self.tabuleiro[i][canto1_y - 1] == WALL and self.tabuleiro[i][canto1_y] != WALL:
-                                    auxiliar.append((i, canto1_y))
-                                    auxiliar_boolean.append(True)
-                                else:
-                                    auxiliar_boolean.append(False)
-
-
-                    if False not in auxiliar_boolean:
-                        for i in auxiliar:
-                            deadlocks_paredes.append(i)
-            return deadlocks_paredes
-        except IndexError:
-            return False
-
-    def em_cruzamento_com_alvo(self, x, y):
-        try:
-            for i in self.alvos:
-                if i[0] == x or i[1] == y:
-                    return True
-        except IndexError:
-            return False
-
-    def deadlocks_tabuleiro(self):
-        deadlocks = list()
-        for i,lista in enumerate(self.tabuleiro):
-            for j in range(0, len(lista)):
-                if self.pos_deadlock_canto(i, j) and (i, j) not in self.alvos and self.tabuleiro[i][j] != WALL:
-                    if (i, j) not in deadlocks:
-                        deadlocks.append((i, j))
-        deadlocks_paredes = self.deadlock_parede(deadlocks)
-        if deadlocks_paredes != None:
-            for i in deadlocks_paredes:
-                if i not in deadlocks:
-                    deadlocks.append(i)
-        #print(deadlocks)
-        return deadlocks
 
     def pos_livre(self, x, y):
         try:
@@ -216,6 +122,101 @@ class Sokoban(Problem):
         """
 
         super().__init__(initial)
+        self.estado_inicial = initial
+        self.tabuleiro_inicial = initial.tabuleiro
+        self.deadlocks = self.deadlocks_tabuleiro()
+
+    def pos_deadlock_canto(self, x, y):
+        try:
+            # canto superior esquerdo
+            if self.tabuleiro_inicial[x - 1][y] == WALL and self.tabuleiro_inicial[x][y - 1] == WALL and self.tabuleiro_inicial[x - 1][y - 1] == WALL:
+                return True
+
+            # canto superior direito
+            if self.tabuleiro_inicial[x - 1][y] == WALL and self.tabuleiro_inicial[x][y + 1] == WALL and self.tabuleiro_inicial[x - 1][y + 1] == WALL:
+                return True
+
+            # canto inferior esquerdo
+            if self.tabuleiro_inicial[x + 1][y] == WALL and self.tabuleiro_inicial[x][y - 1] == WALL and self.tabuleiro_inicial[x + 1][y - 1] == WALL:
+                return True
+
+            # canto inferior direito
+            if self.tabuleiro_inicial[x + 1][y] == WALL and self.tabuleiro_inicial[x][y + 1] == WALL and self.tabuleiro_inicial[x + 1][y - 1] == WALL:
+                return True
+        except IndexError:
+            return False
+
+    def deadlock_parede(self, deadlocks_cantos):
+        try:
+            auxiliar = list()
+            auxiliar_boolean = list()
+            deadlocks_paredes = list()
+            for canto1 in deadlocks_cantos:
+                for canto2 in deadlocks_cantos:
+                    if canto1 != canto2:
+                        canto1_x = canto1[0]
+                        canto1_y = canto1[1]
+
+                        canto2_x = canto2[0]
+                        canto2_y = canto2[1]
+
+                        if canto1_x == canto2_x:
+                            #print("horizontal", canto1, canto2)
+                            auxiliar = list()
+                            auxiliar_boolean = list()
+                            for i in range(canto1_y, canto2_y):
+
+                                if self.tabuleiro_inicial[canto1_x + 1][i] == WALL and self.tabuleiro_inicial[canto1_x][i] != WALL:
+                                    auxiliar.append((canto1_x,i))
+                                    auxiliar_boolean.append(True)
+                                elif self.tabuleiro_inicial[canto1_x - 1][i] == WALL and self.tabuleiro_inicial[canto1_x][i] != WALL:
+                                    auxiliar.append((canto1_x,i))
+                                    auxiliar_boolean.append(True)
+                                else:
+                                    auxiliar_boolean.append(False)
+                        elif canto1_y == canto2_y:
+                            #print("vertical", canto1, canto2)
+                            auxiliar = list()
+                            auxiliar_boolean = list()
+                            for i in range(canto1_x, canto2_x):
+                                if self.tabuleiro_inicial[i][canto1_y + 1] == WALL and self.tabuleiro_inicial[i][canto1_y] != WALL:
+                                    auxiliar.append((i, canto1_y))
+                                    auxiliar_boolean.append(True)
+                                elif self.tabuleiro_inicial[i][canto1_y - 1] == WALL and self.tabuleiro_inicial[i][canto1_y] != WALL:
+                                    auxiliar.append((i, canto1_y))
+                                    auxiliar_boolean.append(True)
+                                else:
+                                    auxiliar_boolean.append(False)
+
+                    if False not in auxiliar_boolean:
+                        for i in auxiliar:
+                            deadlocks_paredes.append(i)
+            return deadlocks_paredes
+        except IndexError:
+            return False
+
+    def em_cruzamento_com_alvo(self, x, y):
+        try:
+            for i in self.estado_inicial.alvos:
+                if i[0] == x or i[1] == y:
+                    return True
+        except IndexError:
+            return False
+
+    def deadlocks_tabuleiro(self):
+        deadlocks = list()
+        for i,lista in enumerate(self.tabuleiro_inicial):
+            for j in range(0, len(lista)):
+                if self.pos_deadlock_canto(i, j) and (i, j) not in self.estado_inicial.alvos and self.tabuleiro_inicial[i][j] != WALL:
+                    if (i, j) not in deadlocks:
+                        deadlocks.append((i, j))
+        deadlocks_paredes = self.deadlock_parede(deadlocks)
+        if deadlocks_paredes != None:
+            for i in deadlocks_paredes:
+                if i not in deadlocks:
+                    deadlocks.append(i)
+        #print(deadlocks)
+        return deadlocks
 
     def actions(self, state):
         """
@@ -283,7 +284,7 @@ class Sokoban(Problem):
                 new_y_box = y - 2
 
         # verificar deadlocks antes de executar a accao EMPURRAR
-        if (new_x_box, new_y_box) not in state.deadlocks:
+        if (new_x_box, new_y_box) not in self.deadlocks:
             if accao == PUSH:
                 if state.caixas_alvos(new_x_box, new_y_box):
                     tabuleiro[new_x_box][new_y_box] = BOX_ON_TARGET
@@ -345,10 +346,21 @@ def heur_euclidean_usher_target(nodo):
         cost.append(math.sqrt((i[0] - arrumador[0]) ** 2 + (i[1] - arrumador[1]) ** 2))
     return min(cost)
 
+def heur_euclidean_usher_box(nodo):
+    """
+    Distância euclidiana do arrumador ao alvo mais próximo dele
+    :param no:
+    :return:
+    """
+    cost = []
+    arrumador = nodo.state.arrumador
+    for i in nodo.state.caixas:
+        cost.append(math.sqrt((i[0] - arrumador[0]) ** 2 + (i[1] - arrumador[1]) ** 2))
+    return min(cost)
 
 from hungarian import Munkres
 
-def hung_alg_manh(nodo):
+def hung_alg_manh_usher_to_target(nodo):
     """
     Algoritmo hungaro, em que o custo de cada caixa a um alvo é a distância de manhattan.
     
@@ -371,6 +383,52 @@ def hung_alg_manh(nodo):
         mhd += value
     return mhd + heur_euclidean_usher_target(nodo)
 
+
+def hung_alg_manh_usher_to_box(nodo):
+    """
+    Algoritmo hungaro, em que o custo de cada caixa a um alvo é a distância de manhattan.
+
+    Explicação no relatório.
+    """
+    m = Munkres()
+
+    caixas = nodo.state.caixas
+    alvos = nodo.state.alvos
+    custo = list()
+    mhd = 0
+
+    for index, c in enumerate(caixas):
+        custo.append(list())
+        for a in alvos:
+            custo[index].append(abs(c[0] - a[0]) + abs(c[1] - a[1]))
+    indexes = m.compute(custo)
+    for row, column in indexes:
+        value = custo[row][column]
+        mhd += value
+    return mhd + heur_euclidean_usher_box(nodo)
+
+def hung_alg_manh(nodo):
+    """
+    Algoritmo hungaro, em que o custo de cada caixa a um alvo é a distância de manhattan.
+
+    Explicação no relatório.
+    """
+    m = Munkres()
+
+    caixas = nodo.state.caixas
+    alvos = nodo.state.alvos
+    custo = list()
+    mhd = 0
+
+    for index, c in enumerate(caixas):
+        custo.append(list())
+        for a in alvos:
+            custo[index].append(abs(c[0] - a[0]) + abs(c[1] - a[1]))
+    indexes = m.compute(custo)
+    for row, column in indexes:
+        value = custo[row][column]
+        mhd += value
+    return mhd
 
 def import_sokoban_file(filename):
     """
@@ -415,6 +473,5 @@ puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
 puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
 puzzle3_1 = import_sokoban_file('puzzles/puzzle3_1.txt')
 puzzle3_2 = import_sokoban_file('puzzles/puzzle3_2.txt')
-
 puzzle4 = import_sokoban_file('puzzles/puzzle4.txt')
 puzzle5 = import_sokoban_file('puzzles/puzzle5.txt')

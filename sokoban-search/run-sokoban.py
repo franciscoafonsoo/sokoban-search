@@ -10,8 +10,6 @@ def timing(f):
         return ret
     return wrap
 
-sokoban = Sokoban(puzzle3)
-
 def statistics(resultado, verbose=False):
     '''Metodo concreto para imprimir dados da resolução de um problema Sokoban'''
 
@@ -41,18 +39,34 @@ def statistics(resultado, verbose=False):
     print('Números de moves:', number_moves)
     print('Números de pushes:', number_pushes)
 
+def execute(nome, algorithm, problema, heuristic=None):
+    print("Execução do algoritmo:", nome)
+    if heuristic != None:
+        inicio = time.time()
+        resultado = algorithm(problema, heuristic)
+        fim = time.time()
+        statistics(resultado, False)
+    else:
+        inicio = time.time()
+        resultado = algorithm(problema)
+        fim = time.time()
+        statistics(resultado, False)
 
-#bfs_resultado = breadth_first_search(sokoban)
-#ucs_resultado = uniform_cost_search(sokoban)
-#astar_resultado = astar_search(sokoban, hung_alg_manh)
+    tempo_execucao = fim - inicio
+    if tempo_execucao > 60:
+        tempo_execucao = tempo_execucao/60
 
-#statistics(astar_resultado, True)
+    print("Tempo de execução:", '{0:.2f}'.format(tempo_execucao))
 
-inicio = time.time()
-astar_resultado = greedy_best_first_graph_search(sokoban, hung_alg_manh)
-fim = time.time()
-statistics(astar_resultado, True)
+sokoban = Sokoban(puzzle3)
 
-print("Tempo de execução", '{0:.2f}'.format(fim-inicio))
-#statistics(bfs_resultado)
-#statistics(ucs_resultado)
+#execute("astar - hungarian", astar_search, sokoban, hung_alg_manh)
+
+execute("greedy - hungarian", greedy_best_first_graph_search, sokoban, hung_alg_manh)
+#execute("greedy - hungarian + euclidean usher to target", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_target)
+
+#execute("greedy - hungarian + euclidean usher to box", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_box)
+
+#execute("greedy - euclidean usher to target", greedy_best_first_graph_search, sokoban, heur_euclidean_usher_target)
+
+
