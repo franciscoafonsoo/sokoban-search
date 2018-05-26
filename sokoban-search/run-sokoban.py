@@ -52,27 +52,26 @@ def execute(nome, algorithm, problema, heuristic=None):
         inicio = time.time()
         resultado = algorithm(problema, heuristic)
         fim = time.time()
-        statistics(resultado, False)
+        statistics(resultado, True)
     else:
         inicio = time.time()
         resultado = algorithm(problema)
         fim = time.time()
-        statistics(resultado, False)
-
+        statistics(resultado, True)
+    #print(resultado.state)
     tempo_execucao = fim - inicio
     if tempo_execucao > 60:
         tempo_execucao = tempo_execucao/60
 
     print("Tempo de execução:", '{0:.2f}'.format(tempo_execucao))
 
+puzzle = "puzzle9"
+puzzle_estado = import_sokoban_file('puzzles/' + puzzle + '.txt')
 
-sokoban = Sokoban(puzzle3)
+sokoban = Sokoban(puzzle_estado)
 
 # execute("astar - hungarian", astar_search, sokoban, hung_alg_manh)
-
 execute("greedy - hungarian", greedy_best_first_graph_search, sokoban, hung_alg_manh)
 # execute("greedy - hungarian + euc_ush_target", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_target)
-
 # execute("greedy - hungarian + euc_ush_box", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_box)
-
 # execute("greedy - euclidean usher to target", greedy_best_first_graph_search, sokoban, heur_euclidean_usher_target)

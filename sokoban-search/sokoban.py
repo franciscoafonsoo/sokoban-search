@@ -175,11 +175,13 @@ class Sokoban(Problem):
                             for i in range(canto1_y, canto2_y):
 
                                 if self.tabuleiro_inicial[canto1_x + 1][i] == WALL and \
-                                        self.tabuleiro_inicial[canto1_x][i] != WALL:
+                                        self.tabuleiro_inicial[canto1_x][i] != WALL and \
+                                        self.tabuleiro_inicial[canto1_x][i] != TARGET:
                                     auxiliar.append((canto1_x, i))
                                     auxiliar_boolean.append(True)
                                 elif self.tabuleiro_inicial[canto1_x - 1][i] == WALL and \
-                                        self.tabuleiro_inicial[canto1_x][i] != WALL:
+                                        self.tabuleiro_inicial[canto1_x][i] != WALL and \
+                                        self.tabuleiro_inicial[canto1_x][i] != TARGET:
                                     auxiliar.append((canto1_x, i))
                                     auxiliar_boolean.append(True)
                                 else:
@@ -190,11 +192,13 @@ class Sokoban(Problem):
                             auxiliar_boolean = list()
                             for i in range(canto1_x, canto2_x):
                                 if self.tabuleiro_inicial[i][canto1_y + 1] == WALL and \
-                                        self.tabuleiro_inicial[i][canto1_y] != WALL:
+                                        self.tabuleiro_inicial[i][canto1_y] != WALL and \
+                                        self.tabuleiro_inicial[canto1_x][i] != TARGET:
                                     auxiliar.append((i, canto1_y))
                                     auxiliar_boolean.append(True)
                                 elif self.tabuleiro_inicial[i][canto1_y - 1] == WALL and \
-                                        self.tabuleiro_inicial[i][canto1_y] != WALL:
+                                        self.tabuleiro_inicial[i][canto1_y] != WALL and \
+                                        self.tabuleiro_inicial[canto1_x][i] != TARGET:
                                     auxiliar.append((i, canto1_y))
                                     auxiliar_boolean.append(True)
                                 else:
@@ -224,11 +228,10 @@ class Sokoban(Problem):
                     if (i, j) not in deadlocks:
                         deadlocks.append((i, j))
         deadlocks_paredes = self.deadlock_parede(deadlocks)
-        if deadlocks_paredes is not None:
+        if deadlocks_paredes is not False:
             for i in deadlocks_paredes:
                 if i not in deadlocks:
                     deadlocks.append(i)
-        # print(deadlocks)
         return deadlocks
 
     def actions(self, state):
@@ -462,7 +465,6 @@ def import_sokoban_file(filename):
     with open(filename) as file:
         for line in file:
             estado.tabuleiro.append(list(line.rstrip('\n')))
-
             for index, value in enumerate(line):
                 if value is USHER:
                     estado.arrumador = (len(estado.tabuleiro) - 1, index)
@@ -477,17 +479,6 @@ def import_sokoban_file(filename):
                     estado.arrumador = (len(estado.tabuleiro) - 1, index)
                     estado.alvos.append((len(estado.tabuleiro) - 1, index))
 
-    len_first = len(estado.tabuleiro[0])
-    return estado if all(len(i) == len_first for i in estado.tabuleiro) else False
-
-
-# importar os 3 ficheiros e testar
-puzzle1 = import_sokoban_file('puzzles/puzzle1.txt')
-puzzle1_2 = import_sokoban_file('puzzles/puzzle1_2.txt')
-puzzle2 = import_sokoban_file('puzzles/puzzle2.txt')
-puzzle2_1 = import_sokoban_file('puzzles/puzzle2_1.txt')
-puzzle3 = import_sokoban_file('puzzles/puzzle3.txt')
-puzzle3_1 = import_sokoban_file('puzzles/puzzle3_1.txt')
-puzzle3_2 = import_sokoban_file('puzzles/puzzle3_2.txt')
-puzzle4 = import_sokoban_file('puzzles/puzzle4.txt')
-puzzle5 = import_sokoban_file('puzzles/puzzle5.txt')
+    #len_first = len(estado.tabuleiro[0])
+    #return estado if all(len(i) == len_first for i in estado.tabuleiro) else False
+    return estado
