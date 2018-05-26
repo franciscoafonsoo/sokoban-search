@@ -114,13 +114,13 @@ class EstadoSokoban:
 
         :return: str
         """
-        represent = ''
+        represent = ""
         for line in self.tabuleiro:
             for char in line:
                 if char == USHER:
                     represent += USHER_EDIT
                 elif char == FREE:
-                    represent += ' '  
+                    represent += " "
                 elif char == TARGET:
                     represent += TARGET_EDIT
                 elif char == BOX:
@@ -133,7 +133,7 @@ class EstadoSokoban:
                     represent += USHER_ON_TARGET_EDIT
                 else:
                     represent += char
-            represent += '\n'
+            represent += "\n"
         return represent
 
     def __gt__(self, estado):
@@ -150,12 +150,14 @@ class EstadoSokoban:
         """Necessário para os algoritmos de procura em grafo."""
         return hash((line for line in self.tabuleiro))
 
+
 # ______________________________________________________________________________
 # Implementação do Problema
 
 
 # noinspection PyAbstractClass
 class Sokoban(Problem):
+
     def __init__(self, initial):
         """
         2.1 Formulação
@@ -174,27 +176,35 @@ class Sokoban(Problem):
     def pos_deadlock_canto(self, x, y):
         try:
             # canto superior esquerdo
-            if self.tabuleiro_inicial[x - 1][y] == WALL and \
-                    self.tabuleiro_inicial[x][y - 1] == WALL and \
-                    self.tabuleiro_inicial[x - 1][y - 1] == WALL:
+            if (
+                self.tabuleiro_inicial[x - 1][y] == WALL
+                and self.tabuleiro_inicial[x][y - 1] == WALL
+                and self.tabuleiro_inicial[x - 1][y - 1] == WALL
+            ):
                 return True
 
             # canto superior direito
-            if self.tabuleiro_inicial[x - 1][y] == WALL and \
-                    self.tabuleiro_inicial[x][y + 1] == WALL \
-                    and self.tabuleiro_inicial[x - 1][y + 1] == WALL:
+            if (
+                self.tabuleiro_inicial[x - 1][y] == WALL
+                and self.tabuleiro_inicial[x][y + 1] == WALL
+                and self.tabuleiro_inicial[x - 1][y + 1] == WALL
+            ):
                 return True
 
             # canto inferior esquerdo
-            if self.tabuleiro_inicial[x + 1][y] == WALL and \
-                    self.tabuleiro_inicial[x][y - 1] == WALL and \
-                    self.tabuleiro_inicial[x + 1][y - 1] == WALL:
+            if (
+                self.tabuleiro_inicial[x + 1][y] == WALL
+                and self.tabuleiro_inicial[x][y - 1] == WALL
+                and self.tabuleiro_inicial[x + 1][y - 1] == WALL
+            ):
                 return True
 
             # canto inferior direito
-            if self.tabuleiro_inicial[x + 1][y] == WALL and \
-                    self.tabuleiro_inicial[x][y + 1] == WALL and \
-                    self.tabuleiro_inicial[x + 1][y - 1] == WALL:
+            if (
+                self.tabuleiro_inicial[x + 1][y] == WALL
+                and self.tabuleiro_inicial[x][y + 1] == WALL
+                and self.tabuleiro_inicial[x + 1][y - 1] == WALL
+            ):
                 return True
         except IndexError:
             return False
@@ -219,13 +229,17 @@ class Sokoban(Problem):
                             auxiliar_boolean = list()
                             for i in range(canto1_y, canto2_y):
 
-                                if self.tabuleiro_inicial[canto1_x + 1][i] == WALL and \
-                                        self.tabuleiro_inicial[canto1_x][i] != WALL:
+                                if (
+                                    self.tabuleiro_inicial[canto1_x + 1][i] == WALL
+                                    and self.tabuleiro_inicial[canto1_x][i] != WALL
+                                ):
                                     auxiliar.append((canto1_x, i))
                                     auxiliar_boolean.append(True)
 
-                                elif self.tabuleiro_inicial[canto1_x - 1][i] == WALL and \
-                                        self.tabuleiro_inicial[canto1_x][i] != WALL:
+                                elif (
+                                    self.tabuleiro_inicial[canto1_x - 1][i] == WALL
+                                    and self.tabuleiro_inicial[canto1_x][i] != WALL
+                                ):
                                     auxiliar.append((canto1_x, i))
                                     auxiliar_boolean.append(True)
 
@@ -238,13 +252,17 @@ class Sokoban(Problem):
                             auxiliar_boolean = list()
 
                             for i in range(canto1_x, canto2_x):
-                                if self.tabuleiro_inicial[i][canto1_y + 1] == WALL and \
-                                        self.tabuleiro_inicial[i][canto1_y] != WALL:
+                                if (
+                                    self.tabuleiro_inicial[i][canto1_y + 1] == WALL
+                                    and self.tabuleiro_inicial[i][canto1_y] != WALL
+                                ):
                                     auxiliar.append((i, canto1_y))
                                     auxiliar_boolean.append(True)
 
-                                elif self.tabuleiro_inicial[i][canto1_y - 1] == WALL and \
-                                        self.tabuleiro_inicial[i][canto1_y] != WALL:
+                                elif (
+                                    self.tabuleiro_inicial[i][canto1_y - 1] == WALL
+                                    and self.tabuleiro_inicial[i][canto1_y] != WALL
+                                ):
                                     auxiliar.append((i, canto1_y))
                                     auxiliar_boolean.append(True)
 
@@ -272,8 +290,11 @@ class Sokoban(Problem):
         for i, lista in enumerate(self.tabuleiro_inicial):
             for j in range(0, len(lista)):
 
-                if self.pos_deadlock_canto(i, j) and (i, j) not in self.estado_inicial.alvos and \
-                        self.tabuleiro_inicial[i][j] != WALL:
+                if (
+                    self.pos_deadlock_canto(i, j)
+                    and (i, j) not in self.estado_inicial.alvos
+                    and self.tabuleiro_inicial[i][j] != WALL
+                ):
 
                     if (i, j) not in deadlocks:
                         deadlocks.append((i, j))
@@ -398,6 +419,7 @@ class Sokoban(Problem):
         elif accao == PUSH:
             return c + 1
 
+
 # ______________________________________________________________________________
 # Heuristicas
 
@@ -435,7 +457,7 @@ def hung_alg_manh_usher_to_target(nodo):
     Explicação no relatório.
     """
     m = Munkres()
-        
+
     caixas = nodo.state.caixas
     alvos = nodo.state.alvos
     custo = list()
@@ -515,7 +537,7 @@ def import_sokoban_file(filename):
 
     with open(filename) as file:
         for line in file:
-            estado.tabuleiro.append(list(line.rstrip('\n')))
+            estado.tabuleiro.append(list(line.rstrip("\n")))
 
             for index, value in enumerate(line):
                 if value is USHER:
