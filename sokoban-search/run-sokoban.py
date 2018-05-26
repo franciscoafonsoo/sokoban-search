@@ -1,20 +1,6 @@
 from sokoban import *
 import time
 
-# ______________________________________________________________________________
-# Puzzles para testes
-
-puzzle1 = import_sokoban_file("puzzles/puzzle1.txt")
-puzzle1_2 = import_sokoban_file("puzzles/puzzle1_2.txt")
-puzzle2 = import_sokoban_file("puzzles/puzzle2.txt")
-puzzle2_1 = import_sokoban_file("puzzles/puzzle2_1.txt")
-puzzle3 = import_sokoban_file("puzzles/puzzle3.txt")
-puzzle3_1 = import_sokoban_file("puzzles/puzzle3_1.txt")
-puzzle3_2 = import_sokoban_file("puzzles/puzzle3_2.txt")
-puzzle4 = import_sokoban_file("puzzles/puzzle4.txt")
-puzzle5 = import_sokoban_file("puzzles/puzzle5.txt")
-
-
 def timing(f):
 
     def wrap(*args):
@@ -63,12 +49,12 @@ def execute(nome, algorithm, problema, heuristic=None):
         inicio = time.time()
         resultado = algorithm(problema, heuristic)
         fim = time.time()
-        statistics(resultado, False)
+        statistics(resultado, True)
     else:
         inicio = time.time()
         resultado = algorithm(problema)
         fim = time.time()
-        statistics(resultado, False)
+        statistics(resultado, True)
 
     tempo_execucao = fim - inicio
     if tempo_execucao > 60:
@@ -76,8 +62,10 @@ def execute(nome, algorithm, problema, heuristic=None):
 
     print("Tempo de execução:", "{0:.2f}".format(tempo_execucao))
 
+puzzle = "puzzle4.txt"
+puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
 
-sokoban = Sokoban(puzzle2)
+sokoban = Sokoban(puzzle_estado)
 
 execute("greedy - hungarian", greedy_best_first_graph_search, sokoban, hung_alg_manh)
 
