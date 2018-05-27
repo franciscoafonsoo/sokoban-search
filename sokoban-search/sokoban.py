@@ -211,14 +211,6 @@ class Sokoban(Problem):
         except IndexError:
             return False
 
-    def em_cruzamento_com_alvo(self, x, y):
-        try:
-            for i in self.estado_inicial.alvos:
-                if i[0] == x or i[1] == y:
-                    return True
-        except IndexError:
-            return False
-
     def deadlocks_tabuleiro(self):
         deadlocks = list()
         for i, lista in enumerate(self.tabuleiro_inicial):
