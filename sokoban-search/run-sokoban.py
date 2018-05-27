@@ -13,7 +13,7 @@ def timing(f):
     return wrap
 
 
-def statistics(resultado, verbose=False):
+def statistics(resultado, caminho=False):
     """
     Metodo concreto para imprimir dados da resolução de um problema Sokoban
 
@@ -34,8 +34,8 @@ def statistics(resultado, verbose=False):
     count = 0
     for index, state in enumerate(path):
         count += 1
-        if verbose:
-            print(state, end="\r")
+        if caminho:
+            print(state, sep=' ', end='', flush=True)
     else:
         print("Número de passos:", index)
 
@@ -62,7 +62,7 @@ def execute(nome, algorithm, problema, heuristic=None):
 
     print("Tempo de execução:", "{0:.2f}".format(tempo_execucao))
 
-puzzle = "puzzle4.txt"
+puzzle = "puzzle2.txt"
 puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
 
 sokoban = Sokoban(puzzle_estado)
