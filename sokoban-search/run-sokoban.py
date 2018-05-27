@@ -57,10 +57,10 @@ def execute(nome, algorithm, problema, heuristic=None):
         statistics(resultado, True)
 
     tempo_execucao = fim - inicio
-    if tempo_execucao > 60:
-        tempo_execucao = tempo_execucao / 60
+    m, s = divmod(tempo_execucao, 60)
+    h, m = divmod(m, 60)
 
-    print("Tempo de execução:", "{0:.2f}".format(tempo_execucao))
+    print("Tempo de execução: %d:%02d:%02d" % (h, m, s))
 
 puzzle = "puzzle2.txt"
 puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
