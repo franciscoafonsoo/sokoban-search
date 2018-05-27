@@ -1,46 +1,36 @@
 from sokoban import *
 import time
 
-def timing(f):
-
-    def wrap(*args):
-        time1 = time.time()
-        ret = f(*args)
-        time2 = time.time()
-        print("tempo de execucao", "{0:.2f}".format(time2 - time1))
-        return ret
-
-    return wrap
+# ______________________________________________________________________________
+# Estatísticas e Função de execução
 
 
 def statistics(resultado, caminho=False):
-    """
-    Metodo concreto para imprimir dados da resolução de um problema Sokoban
+    """ Metodo concreto para imprimir dados da resolução de um problema Sokoban """
+    try:
+        path = resultado.path()
+        solucao = resultado.solution()
+        number_moves = 0
+        number_pushes = 0
 
-    TODO - try except quando path e solution não existem
-    """
-    path = resultado.path()
-    solucao = resultado.solution()
-    number_moves = 0
-    number_pushes = 0
+        for index, action in enumerate(solucao):
+            accao, _ = action.split()
+            if accao == "andar":
+                number_moves += 1
+            else:
+                number_pushes += 1
 
-    for index, action in enumerate(solucao):
-        accao, _ = action.split()
-        if accao == "andar":
-            number_moves += 1
+        for index, state in enumerate(path):
+            if caminho:
+                print(state, sep=" ", end="", flush=True)
         else:
-            number_pushes += 1
+            print("Número de passos:", index)
 
-    count = 0
-    for index, state in enumerate(path):
-        count += 1
-        if caminho:
-            print(state, sep=' ', end='', flush=True)
-    else:
-        print("Número de passos:", index)
+        print("Números de moves:", number_moves)
+        print("Números de pushes:", number_pushes)
 
-    print("Números de moves:", number_moves)
-    print("Números de pushes:", number_pushes)
+    except:
+        print("\nNão existe solução/Parametros mal introduzidos")
 
 
 def execute(nome, algorithm, problema, heuristic=None):
@@ -62,7 +52,11 @@ def execute(nome, algorithm, problema, heuristic=None):
 
     print("Tempo de execução: %d:%02d:%02d" % (h, m, s))
 
-puzzle = "puzzle2.txt"
+
+# ______________________________________________________________________________
+# Carregar puzzles e correr algoritmos
+
+puzzle = "puzzle1_2.txt"
 puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
 
 sokoban = Sokoban(puzzle_estado)
