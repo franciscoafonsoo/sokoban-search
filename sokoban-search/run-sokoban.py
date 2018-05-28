@@ -47,10 +47,13 @@ def execute(nome, algorithm, problema, heuristic=None):
         statistics(resultado, True)
 
     tempo_execucao = fim - inicio
+
+    ms = tempo_execucao % 1
+    ms = ms * 1000
     m, s = divmod(tempo_execucao, 60)
     h, m = divmod(m, 60)
 
-    print("Tempo de execução: %d:%02d:%02d" % (h, m, s))
+    print("Tempo de execução: %d:%02d:%02d:%03d " % (h, m, s, ms))
 
 
 # ______________________________________________________________________________
