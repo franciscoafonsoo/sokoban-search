@@ -21,7 +21,7 @@ def statistics(resultado, caminho=False):
                 number_moves += 1
             else:
                 number_pushes += 1
-
+        print("Passo a passo:\n")
         for index, state in enumerate(path):
             if caminho:
                 print(state, sep=" ", end="", flush=True)
@@ -38,7 +38,6 @@ def spinning_cursor():
     while True:
         for cursor in '|/-\\':
             yield cursor
-
 
 
 def execute(nome, algorithm, problema, heuristic=None):
@@ -63,6 +62,7 @@ def execute(nome, algorithm, problema, heuristic=None):
 
         if (t.is_alive()):
             t.terminate()
+            print("\n")
         statistics(resultado, True)
     else:
         print("É só esperar...")
@@ -75,6 +75,7 @@ def execute(nome, algorithm, problema, heuristic=None):
 
         if (t.is_alive()):
             t.terminate()
+            print("\n")
         statistics(resultado, True)
 
     tempo_execucao = fim - inicio
@@ -90,18 +91,22 @@ def execute(nome, algorithm, problema, heuristic=None):
 # ______________________________________________________________________________
 # Carregar puzzles e correr algoritmos
 
-puzzle = "puzzle3.txt"
+puzzle = "puzzle2.txt"
 puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
 
 sokoban = Sokoban(puzzle_estado)
 
+# execute("breadth_first_search", breadth_first_search, sokoban)
+
+# execute("uniform_cost", uniform_cost_search, sokoban)
+
 execute("greedy - hungarian", greedy_best_first_graph_search, sokoban, hung_alg_manh)
-
-
-# execute("astar - hungarian", astar_search, sokoban, hung_alg_manh)
 
 # execute("greedy - hungarian + euclidean usher to target", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_target)
 
 # execute("greedy - hungarian + euclidean usher to box", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_box)
 
 # execute("greedy - euclidean usher to target", greedy_best_first_graph_search, sokoban, heur_euclidean_usher_target)
+
+# execute("astar - hungarian", astar_search, sokoban, hung_alg_manh)
+
