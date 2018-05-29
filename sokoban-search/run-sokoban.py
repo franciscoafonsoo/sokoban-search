@@ -37,7 +37,7 @@ def statistics(resultado, caminho=False):
 
 def spinning_cursor():
     while True:
-        for cursor in '|/-\\':
+        for cursor in "|/-\\":
             yield cursor
 
 
@@ -50,7 +50,7 @@ def execute(nome, algorithm, problema, heuristic=None):
             sys.stdout.write(spinner.__next__())
             sys.stdout.flush()
             time.sleep(0.1)
-            sys.stdout.write('\b')
+            sys.stdout.write("\b")
 
     if heuristic is not None:
         print("É só esperar...")
@@ -112,13 +112,26 @@ sokoban = Sokoban(puzzle_estado)
 
 # execute("uniform_cost", uniform_cost_search, sokoban)
 
-execute("puzzle3 - greedy - hungarian", greedy_best_first_graph_search, sokoban, hung_alg_manh)
+execute(
+    "puzzle3 - greedy - hungarian",
+    greedy_best_first_graph_search,
+    sokoban,
+    hung_alg_manh,
+)
 
-# execute("greedy - hungarian + euclidean usher to target", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_target)
+# execute(
+    # "greedy - hungarian + euclidean usher to target",
+    # greedy_best_first_graph_search, sokoban,
+    # hung_alg_manh_usher_to_target)
 
-# execute("greedy - hungarian + euclidean usher to box", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_box)
+# execute(
+    # "greedy - hungarian + euclidean usher to box",
+    # greedy_best_first_graph_search, sokoban,
+    # hung_alg_manh_usher_to_box)
 
-# execute("greedy - euclidean usher to target", greedy_best_first_graph_search, sokoban, heur_euclidean_usher_target)
+# execute(
+    # "greedy - euclidean usher to target",
+    # greedy_best_first_graph_search, sokoban,
+    # heur_euclidean_usher_target)
 
 # execute("astar - hungarian", astar_search, sokoban, hung_alg_manh)
-
