@@ -92,16 +92,27 @@ def execute(nome, algorithm, problema, heuristic=None):
 # ______________________________________________________________________________
 # Carregar puzzles e correr algoritmos
 
+puzzle = "puzzle1.txt"
+puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
+sokoban = Sokoban(puzzle_estado)
+
+execute("puzzle1 - breadth - hungarian", breadth_first_search, sokoban)
+
+puzzle = "puzzle2.txt"
+puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
+sokoban = Sokoban(puzzle_estado)
+
+execute("puzzle2 - astar - hungarian", astar_search, sokoban, hung_alg_manh)
+
 puzzle = "puzzle3.txt"
 puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
-
 sokoban = Sokoban(puzzle_estado)
 
 # execute("breadth_first_search", breadth_first_search, sokoban)
 
 # execute("uniform_cost", uniform_cost_search, sokoban)
 
-execute("greedy - hungarian", greedy_best_first_graph_search, sokoban, hung_alg_manh)
+execute("puzzle3 - greedy - hungarian", greedy_best_first_graph_search, sokoban, hung_alg_manh)
 
 # execute("greedy - hungarian + euclidean usher to target", greedy_best_first_graph_search, sokoban, hung_alg_manh_usher_to_target)
 
