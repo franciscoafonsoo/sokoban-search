@@ -14,7 +14,7 @@ def statistics(resultado, caminho=False):
         solucao = resultado.solution()
         number_moves = 0
         number_pushes = 0
-
+        index = 0
         for index, action in enumerate(solucao):
             accao, _ = action.split()
             if accao == "andar":
@@ -31,8 +31,9 @@ def statistics(resultado, caminho=False):
         print("Números de moves:", number_moves)
         print("Números de pushes:", number_pushes)
 
-    except:
+    except NameError:
         print("\nNão existe solução/Parametros mal introduzidos")
+
 
 def spinning_cursor():
     while True:
@@ -60,7 +61,7 @@ def execute(nome, algorithm, problema, heuristic=None):
         resultado = algorithm(problema, heuristic)
         fim = time.time()
 
-        if (t.is_alive()):
+        if t.is_alive():
             t.terminate()
             print("\n")
         statistics(resultado, True)
@@ -73,7 +74,7 @@ def execute(nome, algorithm, problema, heuristic=None):
         resultado = algorithm(problema)
         fim = time.time()
 
-        if (t.is_alive()):
+        if t.is_alive():
             t.terminate()
             print("\n")
         statistics(resultado, True)
@@ -91,7 +92,7 @@ def execute(nome, algorithm, problema, heuristic=None):
 # ______________________________________________________________________________
 # Carregar puzzles e correr algoritmos
 
-puzzle = "puzzle2.txt"
+puzzle = "puzzle3.txt"
 puzzle_estado = import_sokoban_file("puzzles/" + puzzle)
 
 sokoban = Sokoban(puzzle_estado)
